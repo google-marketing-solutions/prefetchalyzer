@@ -2,11 +2,11 @@
 A tool to analyze sessions from HAR files for speed opportunities by prefetching resources.
 
 ## Task list
-[ ] Clarify OSS process (Ayman)
-[ ] Set up options to do code reviews (Ayman)
-[ ] Include HAR file validation from har2csv project (Ayman)
-[x] Split code into separate components for main app, file upload view, table view (Stephan)
-[x] add first material design styles
+- [ ] Clarify OSS process (Ayman)
+- [ ] Set up options to do code reviews (Ayman)
+- [ ] Include HAR file validation from har2csv project (Ayman)
+- [x] Split code into separate components for main app, file upload view, table view (Stephan)
+- [x] add first material design styles
 
 ## Project setup
 ```
