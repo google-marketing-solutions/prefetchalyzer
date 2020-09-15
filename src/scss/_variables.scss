@@ -1,0 +1,7 @@
+@use "~@material/theme" with (
+  $primary: #673ab7,
+  $secondary: #9c27b0,
+  $on-primary: #fff,
+  $on-secondary: #fff,
+);
+@use "~@material/theme/mdc-theme";
