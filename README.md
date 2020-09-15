@@ -50,3 +50,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Disclaimer
+
+This is not an officially supported Google product.
