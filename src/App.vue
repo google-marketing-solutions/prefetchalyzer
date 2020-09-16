@@ -1,9 +1,9 @@
 <template>
-  <div id="app">
+  <main id="app">
     <FileUpload v-show="!state.hasData" @updateParsedHAR="updateParsedHAR" />
     <PageSettings v-show="state.hasData" :pages="pages" @setTitle="updatePageTitle" />
     <PrefetchTable v-show="state.hasData" :pages="pages" :resources="requests" />
-  </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -121,5 +121,6 @@ body {
   margin: 2em auto;
   padding: 0 2em;
   font-family: Roboto;
+  background: #f8f9fa;
 }
 </style>

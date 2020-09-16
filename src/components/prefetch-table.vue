@@ -205,7 +205,7 @@ export default class PrefetchTable extends Vue {
   // render prefetch entry per page/asset
   prefetchTask(page: Page, asset: Resource): string {
     if (page.id === asset.prefetchOn) {
-      return '✅'
+      return '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 10H6.83L9 7.83l1.41-1.41L9 5l-6 6 6 6 1.41-1.41L9 14.17 6.83 12H16c1.65 0 3 1.35 3 3v4h2v-4c0-2.76-2.24-5-5-5z"/></svg>'
     } else if (asset.pages.includes(page.id)) {
       return this.formatPercentage(Math.ceil((asset.transferSize / page.transferSize) * 1000) / 10)
     }
