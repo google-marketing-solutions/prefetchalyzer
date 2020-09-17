@@ -113,6 +113,7 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
+@use "@material/theme/mdc-theme";
 @use "@material/typography/mdc-typography";
 
 // TODO: add link to Google Fonts for Roboto
@@ -122,5 +123,10 @@ body {
   padding: 0 2em;
   font-family: Roboto;
   background: #f8f9fa;
+}
+
+hr {
+  margin: 2rem 0;
+  color: rgba(0, 0, 0, 0.87); // TODO: replace by mdc variable
 }
 </style>
