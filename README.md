@@ -21,8 +21,7 @@ Following settings are made in settings.json:
             "trailingComma": "none",
             "printWidth": 160
         }
-    },
-    "vetur.format.defaultFormatter.ts": "vscode-typescript"
+    }
 }
 ```
 
