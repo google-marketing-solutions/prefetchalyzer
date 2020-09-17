@@ -15,9 +15,11 @@
     "vue-property-decorator": "^8.4.2"
   },
   "devDependencies": {
+    "@material/button": "^7.0.0",
     "@material/checkbox": "^7.0.0",
     "@material/data-table": "^7.0.0",
     "@material/feature-targeting": "^7.0.0",
+    "@material/textfield": "^7.0.0",
     "@material/theme": "^7.0.0",
     "@material/typography": "^7.0.0",
     "sass": "^1.26.10",
