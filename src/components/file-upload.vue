@@ -209,8 +209,10 @@ export default class FileUpload extends Vue {
   }
 }
 
-.logo--emphasized {
-  color: var(--mdc-theme-primary);
+.file-input {
+  input {
+    display: none;
+  }
 }
 
 .file-input {

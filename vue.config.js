@@ -10,5 +10,10 @@ module.exports = {
 				}
 			}
 		}
+	},
+	pwa: {
+		name: 'Prefetchalyzer',
+		themeColor: '#673ab7',
+		msTileColor: '#673ab7'
 	}
 };

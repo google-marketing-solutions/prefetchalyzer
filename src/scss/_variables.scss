@@ -4,5 +4,23 @@
   $on-primary: #fff,
   $on-secondary: #fff,
 );
-
-$primary-light: rgba(#673ab7, 0.12);
+@use "~@material/typography" with (
+  $styles-headline1: (
+    font-family: unquote("'Google Sans', Roboto, Helvetica, Arial, sans-serif")
+  ),
+  $styles-headline2: (
+    font-family: unquote("'Google Sans', Roboto, Helvetica, Arial, sans-serif")
+  ),
+  $styles-headline3: (
+    font-family: unquote("'Google Sans', Roboto, Helvetica, Arial, sans-serif")
+  ),
+  $styles-headline4: (
+    font-family: unquote("'Google Sans', Roboto, Helvetica, Arial, sans-serif")
+  ),
+  $styles-headline5: (
+    font-family: unquote("'Google Sans', Roboto, Helvetica, Arial, sans-serif")
+  ),
+  $styles-headline6: (
+    font-family: unquote("'Google Sans', Roboto, Helvetica, Arial, sans-serif")
+  ),
+);

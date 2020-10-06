@@ -3,7 +3,7 @@
     <header>
       <a class="logo" @click="setActiveView('upload')">
         <img src="./assets/logo.svg" width="24" height="24" />
-        Prefetchalyzer
+        <span class="logo--emphasized">Prefetch</span>alyzer
       </a>
       <nav class="navigation mdc-tab-bar" role="tablist">
         <div class="mdc-tab-scroller">
@@ -191,15 +191,13 @@ export default class App extends Vue {
 
 <style lang="scss">
 @use "@material/theme/mdc-theme";
-@use "@material/typography/mdc-typography";
-
-// TODO: add link to Google Fonts for Roboto
-
-// tabs
 @use "@material/tab-bar/mdc-tab-bar";
 @use "@material/tab-scroller/mdc-tab-scroller";
 @use "@material/tab-indicator/mdc-tab-indicator";
 @use "@material/tab/mdc-tab";
+@use "@material/typography";
+
+@include typography.core-styles;
 
 body {
   margin: 0;
@@ -221,17 +219,22 @@ header {
     flex-flow: row nowrap;
     align-items: center;
     align-self: center;
-    font-family: 'Google Sans';
+    font-family: 'Google Sans', Roboto, sans-serif;
     cursor: pointer;
 
     img {
       margin-right: 0.5rem;
+      border-radius: 0.125rem;
     }
   }
 
   .navigation {
     width: auto;
   }
+}
+
+.logo--emphasized {
+  color: var(--mdc-theme-primary);
 }
 
 main {
