@@ -10,7 +10,6 @@
   "dependencies": {
     "@material/chips": "^7.0.0",
     "@material/menu": "^7.0.0",
-    "@material/tab-bar": "^7.0.0",
     "core-js": "^3.6.5",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
@@ -22,6 +21,8 @@
     "@material/checkbox": "^7.0.0",
     "@material/data-table": "^7.0.0",
     "@material/feature-targeting": "^7.0.0",
+    "@material/snackbar": "^7.0.0",
+    "@material/tab-bar": "^7.0.0",
     "@material/textfield": "^7.0.0",
     "@material/theme": "^7.0.0",
     "@material/typography": "^7.0.0",

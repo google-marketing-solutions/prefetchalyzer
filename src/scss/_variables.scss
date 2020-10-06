@@ -1,6 +1,8 @@
 @use "~@material/theme" with (
   $primary: #673ab7,
-  $secondary: #9c27b0,
+  $accent: #9c27b0,
   $on-primary: #fff,
   $on-secondary: #fff,
 );
+
+$primary-light: rgba(#673ab7, 0.12);

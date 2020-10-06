@@ -158,12 +158,10 @@ export default class App extends Vue {
   setActiveView(view: AppView) {
     this.state.activeView = view
     // check for tabs in navigation to update state
-    new Promise((resolve) => resolve()).then((result) => {
-      const navIndex = this.navigation.findIndex(tab => tab.key === this.state.activeView)
-      if (navIndex !== -1) {
-        this.navigationMDC && this.navigationMDC.activateTab(navIndex)
-      }
-    })
+    const navIndex = this.navigation.findIndex(tab => tab.key === this.state.activeView)
+    if (navIndex !== -1) {
+      this.navigationMDC && this.navigationMDC.activateTab(navIndex)
+    }
   }
 
   updateParsedHAR(parsedHAR: ParsedHAR): void {
@@ -237,6 +235,8 @@ header {
 }
 
 main {
+  height: 90vh;
+  max-height: calc(100vh - 4rem - 60px); // 60px approximation for header height
   margin: 2rem auto;
   padding: 0 2rem;
 }
