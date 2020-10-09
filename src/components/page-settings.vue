@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Pages</h2>
+    <h2 class="mdc-typography--headline6">Pages</h2>
     <ul>
       <li v-for="page in pages" :key="page.id">
         <input type="text" v-model.lazy="page.label" />

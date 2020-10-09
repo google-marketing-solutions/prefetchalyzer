@@ -1,77 +1,78 @@
 <template>
   <div>
-    <h2 class="mdc-typography--headline4">Prefetching Opportunities</h2>
-    <label class="selectionCheckboxLabel">
-      <input type="checkbox" v-model.lazy="filters.collapseUnselected" />
-      Hide unselected requests
-    </label>
-    <br />
+    <h2 class="mdc-typography--headline5">Prefetching Opportunities</h2>
+    <div class="filter-controls">
+      <label class="filter-controls__label">
+        <div class="mdc-checkbox mdc-data-table__row-checkbox">
+          <input type="checkbox" class="mdc-checkbox__native-control" aria-labelledby="u0" v-model.lazy="filters.collapseUnselected" />
+          <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+              <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+            </svg>
+            <div class="mdc-checkbox__mixedmark"></div>
+          </div>
+          <div class="mdc-checkbox__ripple"></div>
+        </div>
+        Hide unselected requests
+      </label>
+      <label class="filter-controls__label">
+        <div class="mdc-checkbox mdc-data-table__row-checkbox">
+          <input type="checkbox" class="mdc-checkbox__native-control" aria-labelledby="u0" v-model.lazy="filters.shortenURLs" />
+          <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+              <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+            </svg>
+            <div class="mdc-checkbox__mixedmark"></div>
+          </div>
+          <div class="mdc-checkbox__ripple"></div>
+        </div>
+        Shorten URLs
+      </label>
+    </div>
     <div class="mdc-data-table">
       <div class="mdc-data-table__table-container">
         <table class="mdc-data-table__table" aria-label="Prefetching Analysis">
           <thead>
             <tr class="mdc-data-table__header-row">
-              <th
-                class="mdc-data-table__header-cell mdc-data-table__header-cell--checkbox"
-                role="columnheader"
-                scope="col"
-              ></th>
+              <th class="mdc-data-table__header-cell mdc-data-table__header-cell--checkbox" role="columnheader" scope="col"></th>
               <th class="mdc-data-table__header-cell" role="columnheader" scope="col">File</th>
               <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Cache</th>
-              <th
-                class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric"
-                role="columnheader"
-                scope="col"
-              >Size</th>
+              <th class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric" role="columnheader" scope="col">Size</th>
               <th
                 class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric pagecolumn"
                 role="columnheader"
                 scope="col"
                 v-for="page in pages"
                 :key="page.id"
-              >{{ page.label }}</th>
+              >
+                {{ page.label }}
+              </th>
             </tr>
           </thead>
           <tbody class="mdc-data-table__content">
             <tr
               v-for="asset in prefetchList"
               :key="asset.url"
-              :class="{ disabledRow: !asset.selectedPrefetch}"
+              :class="{ disabledRow: !asset.selectedPrefetch }"
               v-show="!filters.collapseUnselected || asset.selectedPrefetch"
               class="mdc-data-table__row"
             >
               <td class="mdc-data-table__cell mdc-data-table__cell--checkbox">
                 <div class="mdc-checkbox mdc-data-table__row-checkbox">
-                  <input
-                    type="checkbox"
-                    class="mdc-checkbox__native-control"
-                    aria-labelledby="u0"
-                    v-model.lazy="asset.selectedPrefetch"
-                  />
+                  <input type="checkbox" class="mdc-checkbox__native-control" aria-labelledby="u0" v-model.lazy="asset.selectedPrefetch" />
                   <div class="mdc-checkbox__background">
                     <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                      <path
-                        class="mdc-checkbox__checkmark-path"
-                        fill="none"
-                        d="M1.73,12.91 8.1,19.28 22.79,4.59"
-                      />
+                      <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                     </svg>
                     <div class="mdc-checkbox__mixedmark"></div>
                   </div>
                   <div class="mdc-checkbox__ripple"></div>
                 </div>
               </td>
-              <th class="mdc-data-table__cell" scope="row">{{ asset.url }}</th>
+              <th class="mdc-data-table__cell" scope="row" :title="asset.url">{{ getDisplayedURL(asset.url) }}</th>
               <td class="mdc-data-table__cell">{{ asset.cacheControl }}</td>
-              <td
-                class="mdc-data-table__cell mdc-data-table__cell--numeric"
-              >{{ formatSize(asset.transferSize) }}</td>
-              <td
-                class="mdc-data-table__cell mdc-data-table__cell--numeric"
-                v-for="page in pages"
-                :key="page.id"
-                v-html="prefetchTask(page, asset)"
-              ></td>
+              <td class="mdc-data-table__cell mdc-data-table__cell--numeric">{{ formatSize(asset.transferSize) }}</td>
+              <td class="mdc-data-table__cell mdc-data-table__cell--numeric" v-for="page in pages" :key="page.id" v-html="prefetchTask(page, asset)"></td>
             </tr>
             <tr class="noBackground">
               <td colspan="99">
@@ -88,15 +89,8 @@
             </tr>
             <tr class="noBackground">
               <td colspan="4"></td>
-              <th
-                class="mdc-data-table__cell mdc-data-table__cell--numeric"
-                v-for="(page, index) in pages"
-                :key="page.id"
-              >
-                <span
-                  v-if="index > 0"
-                  v-html="formatPercentage(totalPrefetchSavingsPercentage(page.id))"
-                ></span>
+              <th class="mdc-data-table__cell mdc-data-table__cell--numeric" v-for="(page, index) in pages" :key="page.id">
+                <span v-if="index > 0" v-html="formatPercentage(totalPrefetchSavingsPercentage(page.id))"></span>
                 <br v-if="index > 0" />
                 <span v-else>—</span>
                 {{ index > 0 ? formatSize(totalPrefetchSavings(page.id)) : '' }}
@@ -107,7 +101,7 @@
       </div>
     </div>
 
-    <h3>Export</h3>
+    <h3 class="mdc-typography--headline6">Export</h3>
     <button @click="generatePrefetchHTML()">Generate Prefetch HTML</button>
     <button @click="generateWPTScript()">Generate WebPageTest script</button>
     <textarea rows="10" cols="80" v-model="generated.prefetchExport"></textarea>
@@ -116,17 +110,19 @@
 
 <script lang="ts">
 import { Page, PageId } from '@/models/page'
-import { Resource } from '@/models/resource'
+import { Resource, ResourceURL } from '@/models/resource'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class PrefetchTable extends Vue {
-  @Prop() private pages!: Page[];
-  @Prop() private resources!: Resource[];
+  @Prop() private pages!: Page[]
+  @Prop() private resources!: Resource[]
 
   private filters = {
     // whether un-selected rows should be hidden from the UI (default: shown, but grayed-out)
-    collapseUnselected: false
+    collapseUnselected: false,
+    // whether URLs shall be displayed shortened (example.com/.../file.js) in the table (default: shorten)
+    shortenURLs: true
   }
 
   private generated = {
@@ -229,6 +225,27 @@ export default class PrefetchTable extends Vue {
     return `<span class="percentValue" style="opacity: ${Number(percentValue) / 100 + 0.5}">${Number(percentValue)}%</span>`
   }
 
+  getDisplayedURL(url: ResourceURL): string {
+    // do not shorten short URLs
+    if (!this.filters.shortenURLs || url.length < 65) {
+      return url
+    }
+    const splittedProtocol = url.split('://')
+    const splittedPath = splittedProtocol[1].split('/')
+
+    // remove empty element at the end for URLs ending with '/'
+    if (splittedPath[splittedPath.length - 1] === '') {
+      splittedPath.splice(-1)
+    }
+
+    // do not shorten paths with one sub-directory
+    if (splittedPath.length < 3) {
+      return url
+    }
+
+    return `${splittedProtocol[0]}://${splittedPath[0]}/…/${splittedPath[splittedPath.length - 1]}`
+  }
+
   generatePrefetchHTML() {
     let html = ''
 
@@ -308,7 +325,19 @@ textarea {
   min-width: 4rem;
 }
 
-.noBackground {
-  background-color: transparent !important;
+.filter-controls {
+  display: flex;
+  flex-flow: row wrap;
+
+  &__label {
+    display: inline-flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    cursor: pointer;
+
+    & + & {
+      margin-left: 1rem;
+    }
+  }
 }
 </style>
