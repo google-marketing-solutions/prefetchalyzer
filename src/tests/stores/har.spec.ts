@@ -26,20 +26,19 @@ describe('Constructor init tests', () => {
 })
 
 describe('extractEntry tests', () => {
-  it('Returns an entry match false property if the entry does not match the defined pattern', () => {
+  it('Returns a null if the entry does not match the defined pattern', () => {
     const HARInput = JSON.parse(require('fs').readFileSync(__dirname + '/data/single-entry-invalid.har'))
     const harStore = new har.HarStore(HARInput)
     const result = harStore.extractEntry(HARInput.log.entries[0])
 
-    chai.expect(result.match).to.equal(false)
+    chai.expect(result).to.equal(null)
   })
 
-  it('Parse, vaidate and extract a HAR entry objects with the required fields only', () => {
+  it('Parse, validate and extract a HAR entry objects with the required fields only', () => {
     const HARInput = JSON.parse(require('fs').readFileSync(__dirname + '/data/single-entry-valid.har'))
     const harStore = new har.HarStore(HARInput)
     const result = harStore.extractEntry(HARInput.log.entries[0])
     const expected = {
-      match: true,
       resourceType: 'document',
       priority: 'VeryHigh',
       transferSize: 2863,
@@ -59,8 +58,30 @@ describe('extractEntry tests', () => {
     const harStore = new har.HarStore(HARInput)
     const result = harStore.extractEntry(HARInput.log.entries[0])
 
-    chai.expect(result.match).to.equal(true)
     chai.expect(result.cacheControl).to.equal(null)
+  })
+})
+
+describe('extractPage tests', () => {
+  it('Returns a null if the page entry does not match the defined pattern', () => {
+    const HARInput = JSON.parse(require('fs').readFileSync(__dirname + '/data/single-entry-invalid.har'))
+    const harStore = new har.HarStore(HARInput)
+    const result = harStore.extractPage(HARInput.log.pages[0])
+
+    chai.expect(result).to.equal(null)
+  })
+
+  it('Parses, validates and extracts a HAR page object with the required fields only', () => {
+    const HARInput = JSON.parse(require('fs').readFileSync(__dirname + '/data/single-entry-valid.har'))
+    const harStore = new har.HarStore(HARInput)
+    const result = harStore.extractPage(HARInput.log.pages[0])
+    const expected = {
+      startedDateTime: '2020-09-24T03:36:35.760Z',
+      id: 'page_1',
+      title: 'https://www.google.com/whatever-random-url'
+    }
+
+    chai.expect(result).to.deep.equal(expected)
   })
 })
 
