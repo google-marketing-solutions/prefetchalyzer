@@ -206,10 +206,12 @@ export default class App extends Vue {
 
 <style lang="scss">
 @use "@material/theme/mdc-theme";
+@use "@material/button/mdc-button";
 @use "@material/tab-bar/mdc-tab-bar";
 @use "@material/tab-scroller/mdc-tab-scroller";
 @use "@material/tab-indicator/mdc-tab-indicator";
 @use "@material/tab/mdc-tab";
+@use "@material/textfield/mdc-text-field";
 @use "@material/typography";
 
 @include typography.core-styles;

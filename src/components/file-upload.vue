@@ -174,7 +174,7 @@ export default class FileUpload extends Vue {
     }
     this.snackbarTimeout && clearTimeout(this.snackbarTimeout)
     this.snackbarMDC && this.snackbarMDC.open()
-    this.snackbarTimeout = setTimeout(() => this.snackbarMDC && this.snackbarMDC.close(), 5000)
+    this.snackbarTimeout = window.setTimeout(() => this.snackbarMDC && this.snackbarMDC.close(), 5000)
   }
 
   mounted() {
@@ -201,8 +201,6 @@ export default class FileUpload extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@use "@material/button/mdc-button";
-@use "@material/textfield/mdc-text-field";
 @use "@material/snackbar/mdc-snackbar";
 
 .file-upload-container {

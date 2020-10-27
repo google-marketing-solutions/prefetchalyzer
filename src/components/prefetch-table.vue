@@ -15,7 +15,33 @@
 
 <template>
   <div>
-    <h2 class="mdc-typography--headline5">Prefetching Opportunities</h2>
+    <div class="table-title">
+      <h2 class="mdc-typography--headline5">Prefetching Opportunities</h2>
+      <div class="table-title__actions">
+        <div id="export-menu" class="mdc-menu-surface--anchor">
+          <button class="mdc-button" id="export-menu-button" @click="openExportMenu()">
+            <svg class="mdc-button__icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" />
+            </svg>
+            <span class="mdc-button__label">Export</span>
+          </button>
+
+          <div class="mdc-menu mdc-menu-surface" ref="exportMenu">
+            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+              <li class="mdc-list-item" role="menuitem" @click="generatePrefetchHTML()">
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">Generate prefetch HTML</span>
+              </li>
+              <li class="mdc-list-item" role="menuitem" @click="generateWPTScript()">
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">Generate WebPageTest script</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="filter-controls">
       <label class="filter-controls__label">
         <div class="mdc-checkbox mdc-data-table__row-checkbox">
@@ -54,7 +80,7 @@
               <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Cache</th>
               <th class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric" role="columnheader" scope="col">Size</th>
               <th
-                class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric pagecolumn"
+                class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric pagecolumn bg-lightgrey"
                 role="columnheader"
                 scope="col"
                 v-for="page in pages"
@@ -87,22 +113,22 @@
               <th class="mdc-data-table__cell" scope="row" :title="asset.url">{{ getDisplayedURL(asset.url) }}</th>
               <td class="mdc-data-table__cell">{{ asset.cacheControl }}</td>
               <td class="mdc-data-table__cell mdc-data-table__cell--numeric">{{ formatSize(asset.transferSize) }}</td>
-              <td class="mdc-data-table__cell mdc-data-table__cell--numeric" v-for="page in pages" :key="page.id" v-html="prefetchTask(page, asset)"></td>
-            </tr>
-            <tr class="noBackground">
-              <td colspan="99">
-                <hr />
-              </td>
+              <td
+                class="mdc-data-table__cell mdc-data-table__cell--numeric bg-lightgrey"
+                v-for="page in pages"
+                :key="page.id"
+                v-html="prefetchTask(page, asset)"
+              ></td>
             </tr>
             <!-- TOTALS -->
-            <tr class="noBackground">
-              <td class="mdc-data-table__cell" colspan="3">{{ totalAssets }} assets</td>
+            <tr class="totals-row">
+              <td class="mdc-data-table__cell" colspan="3">{{ totalAssets }} resources</td>
               <td class="mdc-data-table__cell mdc-data-table__cell--numeric">{{ totalSize }}</td>
               <td class="mdc-data-table__cell" colspan="99">
                 <strong>Savings per page</strong>
               </td>
             </tr>
-            <tr class="noBackground">
+            <tr>
               <td colspan="4"></td>
               <th class="mdc-data-table__cell mdc-data-table__cell--numeric" v-for="(page, index) in pages" :key="page.id">
                 <span v-if="index > 0" v-html="formatPercentage(totalPrefetchSavingsPercentage(page.id))"></span>
@@ -116,22 +142,57 @@
       </div>
     </div>
 
-    <h3 class="mdc-typography--headline6">Export</h3>
-    <button @click="generatePrefetchHTML()">Generate Prefetch HTML</button>
-    <button @click="generateWPTScript()">Generate WebPageTest script</button>
-    <textarea rows="10" cols="80" v-model="generated.prefetchExport"></textarea>
+    <div class="mdc-dialog" ref="dialog">
+      <div class="mdc-dialog__container">
+        <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true" aria-labelledby="data-export" aria-describedby="data-export-dialog-content">
+          <div class="mdc-dialog__content" id="data-export-dialog-content">
+            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label prefetch-export-output">
+              <span class="mdc-text-field__resizer">
+                <textarea
+                  v-model="generated.prefetchExport"
+                  class="mdc-text-field__input"
+                  rows="20"
+                  cols="120"
+                  aria-label="Label"
+                  placeholder="Export output is generated here ..."
+                ></textarea>
+              </span>
+              <span class="mdc-notched-outline">
+                <span class="mdc-notched-outline__leading"></span>
+                <span class="mdc-notched-outline__trailing"></span>
+              </span>
+            </label>
+          </div>
+          <div class="mdc-dialog__actions">
+            <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+              <div class="mdc-button__ripple"></div>
+              <span class="mdc-button__label">Close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mdc-dialog__scrim"></div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Page, PageId } from '@/models/page'
 import { Resource, ResourceURL } from '@/models/resource'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Ref } from 'vue-property-decorator'
+import { MDCDialog } from '@material/dialog'
+import { MDCMenu } from '@material/menu'
 
 @Component
 export default class PrefetchTable extends Vue {
   @Prop() private pages!: Page[]
   @Prop() private resources!: Resource[]
+  @Ref() dialog!: HTMLElement
+  @Ref() exportMenu!: HTMLElement
+
+  // Material component reference
+  private dialogMDC: MDCDialog | null = null
+  private exportMenuMDC: MDCMenu | null = null
 
   private filters = {
     // whether un-selected rows should be hidden from the UI (default: shown, but grayed-out)
@@ -203,6 +264,22 @@ export default class PrefetchTable extends Vue {
 
   // METHODS
 
+  mounted() {
+    // TODO: check if mount is the correct lifecycle hook to init components
+    if (this.dialog) {
+      this.dialogMDC = new MDCDialog(this.dialog)
+    }
+    if (this.exportMenu) {
+      this.exportMenuMDC = new MDCMenu(this.exportMenu)
+    }
+  }
+
+  openExportMenu() {
+    if (this.exportMenuMDC) {
+      this.exportMenuMDC.open = true
+    }
+  }
+
   // readable file size
   formatSize(size: number): string {
     if (size > 1000000) {
@@ -262,6 +339,7 @@ export default class PrefetchTable extends Vue {
   }
 
   generatePrefetchHTML() {
+    this.generated.prefetchExport = ''
     let html = ''
 
     for (const [pageId, assets] of Object.entries(this.selectedPrefetchAssetsByPage)) {
@@ -280,11 +358,17 @@ export default class PrefetchTable extends Vue {
       }
     }
     this.generated.prefetchExport = html
+
+    if (this.dialogMDC) {
+      this.dialogMDC.open()
+    }
   }
 
   generateWPTScript() {
-    let html = `NO PREFETCHING
-----------------------
+    this.generated.prefetchExport = ''
+    let html = `// NO PREFETCHING
+// ----------------------
+// Script start
 `
     this.pages.forEach(
       (page) =>
@@ -293,10 +377,11 @@ navigate\t${page.url}
 
 `)
     )
-    html += `
+    html += `// Script end
 
-WITH PREFETCHING
-----------------------
+// WITH PREFETCHING
+// ----------------------
+// Script start
 `
     for (const [pageId, assets] of Object.entries(this.selectedPrefetchAssetsByPage)) {
       html += `setEventName\t${this.pagesObject[pageId].label}
@@ -313,7 +398,12 @@ execAndWait\tentries.map(function(entry) { var link = document.createElement("li
 `
       }
     }
+    html += '// Script end'
     this.generated.prefetchExport = html
+
+    if (this.dialogMDC) {
+      this.dialogMDC.open()
+    }
   }
 }
 </script>
@@ -321,6 +411,10 @@ execAndWait\tentries.map(function(entry) { var link = document.createElement("li
 <style lang="scss">
 @use "~@material/data-table/mdc-data-table";
 @use "~@material/checkbox/mdc-checkbox";
+@use "~@material/dialog/mdc-dialog";
+@use "~@material/menu/mdc-menu";
+@use "~@material/menu-surface/mdc-menu-surface";
+@use "~@material/list/mdc-list";
 
 textarea {
   display: block;
@@ -336,8 +430,27 @@ textarea {
   font-weight: 700;
 }
 
-.pageColumn {
+.pagecolumn {
   min-width: 4rem;
+}
+
+.bg-lightgrey {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.totals-row {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.table-title {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+
+  &__actions > .mdc-button:not(:first-child) {
+    margin-left: 1rem;
+  }
 }
 
 .filter-controls {
@@ -354,5 +467,9 @@ textarea {
       margin-left: 1rem;
     }
   }
+}
+
+.prefetch-export-output textarea {
+  font-family: 'Roboto Mono', 'Consolas', 'Courier New', Courier, monospace;
 }
 </style>
