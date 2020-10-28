@@ -17,7 +17,7 @@
   <div class="file-upload-container" ref="fileDropArea">
     <div class="file-upload-container__inner">
       <h1 class="mdc-typography--headline4"><span class="logo--emphasized">Prefetch</span>alyzer</h1>
-      <p class="mdc-typography--body1">Record a user session in HAR format, and upload it here to identify prefetching opportunities.</p>
+      <p class="mdc-typography--body1">Record a user session in HAR format, and import it here to identify prefetching opportunities.</p>
 
       <label for="file-input" class="mdc-button mdc-button--raised file-input">
         Select HAR file

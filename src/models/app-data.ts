@@ -29,7 +29,7 @@ export interface ParsedHAR {
     resources: Resource[];
 }
 
-export type AppView = 'upload' | 'about' | 'prefetch_opps'
+export type AppView = 'import' | 'about' | 'prefetch_opps'
 
 export type JsonObject = Record<string, any>;
 

@@ -16,7 +16,7 @@
 <template>
   <div id="app">
     <header>
-      <a class="logo" @click="setActiveView('upload')">
+      <a class="logo" @click="setActiveView('import')">
         <img src="./assets/logo.svg" width="24" height="24" />
         <span class="logo--emphasized">Prefetch</span>alyzer
       </a>
@@ -40,7 +40,7 @@
       </nav>
     </header>
     <main id="app">
-      <FileUpload v-show="state.activeView === 'upload'" @updateParsedHAR="updateParsedHAR" />
+      <FileUpload v-show="state.activeView === 'import'" @updateParsedHAR="updateParsedHAR" />
 
       <div v-show="state.hasData && state.activeView === 'prefetch_opps'">
         <PrefetchTable :pages="pages" :resources="requests" />
@@ -76,18 +76,18 @@ import { MDCTabBar } from '@material/tab-bar'
 export default class App extends Vue {
   private state: AppState = {
     hasData: false,
-    activeView: 'upload'
+    activeView: 'import'
   }
 
   private navigation: AppTab[] = [
     {
-      key: 'upload',
-      label: 'Upload Session',
+      key: 'import',
+      label: 'Import Session',
       requiresData: false
     },
     {
       key: 'prefetch_opps',
-      label: 'Prefetching Analysis',
+      label: 'Prefetch Analysis',
       requiresData: true
     },
     {
