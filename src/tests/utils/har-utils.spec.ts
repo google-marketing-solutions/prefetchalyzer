@@ -14,7 +14,6 @@
  *
  **/
 
-import path from 'path'
 import chai from 'chai'
 import { buildHarFromString } from '../../utils/har-utils'
 import { loadTestObjectFromFile } from '../test-utils'
@@ -38,7 +37,7 @@ export default function run() {
     })
 
     it('Should create a new HarStore instance', () => {
-      const HARInput = loadTestObjectFromFile('single-entry-valid.har') 
+      const HARInput = loadTestObjectFromFile('single-entry-valid.har')
       const harStore = buildHarFromString(JSON.stringify(HARInput))
 
       chai.expect(harStore).to.have.property('entries')

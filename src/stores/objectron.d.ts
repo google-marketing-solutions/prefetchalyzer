@@ -14,4 +14,4 @@
  *
  **/
 
-declare module '@menadevs/objectron' 
+declare module '@menadevs/objectron'

@@ -20,18 +20,18 @@ import { Page, PageId } from '@/models/page'
 import { TransferSizes } from '@/models/transfer-sizes'
 import { HarEntry } from '@/models/har-entry'
 import { HarPage } from '@/models/har-page'
+import { JsonObject } from '@/models/app-data'
 import match from '@menadevs/objectron'
-
 
 export class HarStore {
   pages: Array<HarPage>
   entries: Array<HarEntry>
 
-  constructor(rawHar: Record<string, any>) {
+  constructor(rawHar: JsonObject) {
     this.pages = []
     this.entries = []
 
-    rawHar.log.entries.forEach((entry: any) => {
+    rawHar.log.entries.forEach((entry: JsonObject) => {
       const extractedEntry = this.extractEntry(entry)
 
       if (extractedEntry != null) {
@@ -39,7 +39,7 @@ export class HarStore {
       }
     })
 
-    rawHar.log.pages.forEach((page: any) => {
+    rawHar.log.pages.forEach((page: JsonObject) => {
       const extractedPage = this.extractPage(page)
 
       if (extractedPage != null) {
@@ -51,7 +51,7 @@ export class HarStore {
   /**
    * Parses and extracts the relevant properties from a page entry in the raw HAR object
    */
-  extractPage(entry: Record<string, any>):HarPage|null {
+  extractPage(entry: JsonObject): HarPage|null {
     const pagePattern = {
       startedDateTime: /(?<startedDateTime>.*)/,
       id: /(?<id>page_\d+)/,
@@ -60,13 +60,13 @@ export class HarStore {
 
     const matchResult = match(entry, pagePattern)
 
-    return (matchResult.match)? matchResult.groups : null
+    return (matchResult.match) ? matchResult.groups : null
   }
 
   /**
    * Parses and extracts data from a single HAR entry based on a regex based schema
    */
-  extractEntry(entry: Record<string, any>):HarEntry|null {
+  extractEntry(entry: JsonObject): HarEntry|null {
     const baseEntryPattern = {
       pageref: /(?<pageRef>page_\d+)/,
       _priority: /(?<priority>.*)/,
@@ -74,15 +74,15 @@ export class HarStore {
       request: {
         method: /(?<method>GET|POST)/,
         url: /(?<url>https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))/,
-        httpVersion: /(?<httpVersion>.*)/,
+        httpVersion: /(?<httpVersion>.*)/
       },
       response: {
         status: /^(?<status>[0-9]{3})/,
         headers: [
-          { name: /cache-control/i, value: /(?<cacheControl>.*)/ },
+          { name: /cache-control/i, value: /(?<cacheControl>.*)/ }
         ],
         _transferSize: /(?<transferSize>\d+)/
-      },
+      }
     }
 
     const matchResult = match(entry, baseEntryPattern)
@@ -95,8 +95,8 @@ export class HarStore {
       result.status = parseInt(result.status)
       result.transferSize = parseInt(result.transferSize)
 
-      if (!result.hasOwnProperty('cacheControl')) {
-        result['cacheControl'] = null
+      if (typeof (result.cacheControl) === 'undefined') {
+        result.cacheControl = null
       }
 
       return result
@@ -108,11 +108,11 @@ export class HarStore {
   /**
    * Calculates the transfer size by page based on the entries on the object
    */
-  getPageTransferSizes():TransferSizes {
-    const transferSizes:TransferSizes = {}
+  getPageTransferSizes(): TransferSizes {
+    const transferSizes: TransferSizes = {}
 
-    this.entries.forEach((entry:HarEntry) => {
-      if (!transferSizes.hasOwnProperty(entry.pageRef)) {
+    this.entries.forEach((entry: HarEntry) => {
+      if (typeof (transferSizes[entry.pageRef]) === 'undefined') {
         transferSizes[entry.pageRef] = 0
       }
 
@@ -125,11 +125,11 @@ export class HarStore {
   /**
    * Maps each entry URL to a list of pages
    */
-  getUrlPageOccurences():Record<ResourceURL, Array<PageId>> {
-    const urlPageMap:Record<ResourceURL, Array<PageId>> = {}
+  getUrlPageOccurences(): Record<ResourceURL, Array<PageId>> {
+    const urlPageMap: Record<ResourceURL, Array<PageId>> = {}
 
-    this.entries.forEach((entry:HarEntry) => {
-      if (urlPageMap.hasOwnProperty(entry.url)) {
+    this.entries.forEach((entry: HarEntry) => {
+      if (typeof (urlPageMap[entry.url]) !== 'undefined') {
         urlPageMap[entry.url].push(entry.pageRef)
       } else {
         urlPageMap[entry.url] = [entry.pageRef]
@@ -143,12 +143,12 @@ export class HarStore {
    * Returns a list of resources based on the entry data
    * TODO: Update with method params to enable filtering options on resources
    */
-  getResources():Array<Resource> {
+  getResources(): Array<Resource> {
     const urlPagesMap = this.getUrlPageOccurences()
-    const resources:Record<ResourceURL, Resource> = {}
+    const resources: Record<ResourceURL, Resource> = {}
 
-    this.entries.forEach((entry:HarEntry) => {
-      if(!resources.hasOwnProperty(entry.url)) {
+    this.entries.forEach((entry: HarEntry) => {
+      if (typeof (resources[entry.url]) === 'undefined') {
         resources[entry.url] = {
           url: entry.url,
           cacheControl: entry.cacheControl,
@@ -166,10 +166,10 @@ export class HarStore {
   /**
    * Returns a list of sorted pages along with their transfer sizes
    */
-  getPages():Array<Page> {
+  getPages(): Array<Page> {
     const pageTransferSizes = this.getPageTransferSizes()
 
-    return this.pages.map((page:HarPage) => {
+    return this.pages.map((page: HarPage) => {
       return {
         id: page.id,
         label: page.id,

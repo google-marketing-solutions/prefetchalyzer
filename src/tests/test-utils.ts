@@ -17,7 +17,7 @@
 import fs from 'fs'
 import path from 'path'
 
-export function loadTestObjectFromFile(fileName:string):Record<string, any> {
+export function loadTestObjectFromFile(fileName: string): Record<string, any> {
   const fileContent = fs.readFileSync(path.resolve(__dirname, `./data/${fileName}`)).toString()
   return JSON.parse(fileContent)
 }

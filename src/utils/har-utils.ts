@@ -17,29 +17,28 @@
 import { HarStore } from '../stores/har'
 import { ResourceURL } from '@/models/resource'
 import { PageId } from '@/models/page'
-import { ParsedHAR } from '@/models/app-data'
+import { ParsedHAR, JsonObject } from '@/models/app-data'
 
 /**
  * A simple factory for loading a string input into a valid HAR store instance
  */
-export function buildHarFromString(har:string):HarStore {
-  let rawHar: Record<string, any>
+export function buildHarFromString(har: string): HarStore {
+  let rawHar: JsonObject
 
   try {
     rawHar = JSON.parse(har)
-  } catch(e) {
+  } catch (e) {
     throw new Error('Invalid JSON structure in HAR')
   }
 
-  if (typeof(rawHar.log) === 'undefined' ||
-      typeof(rawHar.log.pages) === 'undefined' ||
-      typeof(rawHar.log.entries) === 'undefined') {
+  if (typeof (rawHar.log) === 'undefined' ||
+      typeof (rawHar.log.pages) === 'undefined' ||
+      typeof (rawHar.log.entries) === 'undefined') {
     throw new Error('Missing required HAR properties, log, pages or entries')
   }
 
   return new HarStore(rawHar)
 }
-
 
 export function parseHARFile(harFile: string): ParsedHAR {
   const har = JSON.parse(harFile)

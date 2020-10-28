@@ -18,7 +18,6 @@ import chai from 'chai'
 import { HarStore } from '../../stores/har'
 import { loadTestObjectFromFile } from '../test-utils'
 
-
 export default function run() {
   describe('Constructor init tests', () => {
     it('Stores a list of pages and entries extracted from the original HAR object', () => {
@@ -120,8 +119,8 @@ export default function run() {
 
       const result = harStore.getPageTransferSizes()
       const expected = {
-        'page_1': 689,
-        'page_2': 650
+        page_1: 689,
+        page_2: 650
       }
 
       chai.expect(result).to.deep.equal(expected)
@@ -204,7 +203,7 @@ export default function run() {
           prefetchOn: null
         }
       ]
-      
+
       result.forEach(resultItem => chai.expect(expected).to.deep.include(resultItem))
     })
   })

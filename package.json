@@ -75,8 +75,22 @@
       "space-before-function-paren": [
         "error",
         "never"
-      ]
-    }
+      ],
+      "no-useless-escape": 0,
+      "@typescript-eslint/triple-slash-reference": 0
+    },
+    "overrides": [
+      {
+        "files": [
+          "*.spec.ts"
+        ],
+        "rules": {
+          "no-useless-escape": 0,
+          "@typescript-eslint/camelcase": 0,
+          "no-unused-expressions": 0
+        }
+      }
+    ]
   },
   "browserslist": [
     "> 1%",
