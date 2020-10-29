@@ -49,7 +49,7 @@ export default function run() {
       chai.expect(result).to.equal(null)
     })
 
-    it('Parse, validate and extract a HAR entry objects with the required fields only', () => {
+    it('Parse, validate and extract a HAR entry object with the required fields only', () => {
       const HARInput = loadTestObjectFromFile('single-entry-valid.har')
       const harStore = new HarStore(HARInput)
       const result = harStore.extractEntry(HARInput.log.entries[0])
@@ -75,6 +75,14 @@ export default function run() {
 
       chai.expect(result).to.not.equal(null)
       chai.expect(result!.cacheControl).to.equal(null)
+    })
+
+    it('Should only allow entries with a status code 200', () => {
+      const HARInput = loadTestObjectFromFile('single-entry-404.har')
+      const harStore = new HarStore(HARInput)
+      const result = harStore.extractEntry(HARInput.log.entries[0])
+
+      chai.expect(result).to.equal(null)
     })
   })
 

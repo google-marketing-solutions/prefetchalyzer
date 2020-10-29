@@ -77,7 +77,7 @@ export class HarStore {
         httpVersion: /(?<httpVersion>.*)/
       },
       response: {
-        status: /^(?<status>[0-9]{3})/,
+        status: /^(?<status>200)/,
         headers: [
           { name: /cache-control/i, value: /(?<cacheControl>.*)/ }
         ],
@@ -169,13 +169,15 @@ export class HarStore {
   getPages(): Array<Page> {
     const pageTransferSizes = this.getPageTransferSizes()
 
-    return this.pages.map((page: HarPage) => {
-      return {
-        id: page.id,
-        label: page.id,
-        url: page.title,
-        transferSize: pageTransferSizes[page.id] ? pageTransferSizes[page.id] : 0
-      }
-    })
+    return this.pages
+      .sort((a: HarPage, b: HarPage) => (a.startedDateTime > b.startedDateTime ? 1 : -1))
+      .map((page: HarPage) => {
+        return {
+          id: page.id,
+          label: page.id,
+          url: page.title,
+          transferSize: pageTransferSizes[page.id] ? pageTransferSizes[page.id] : 0
+        }
+      })
   }
 }

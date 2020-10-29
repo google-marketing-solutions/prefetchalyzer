@@ -68,8 +68,8 @@
 
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
-import { parseHARFile } from '@/utils/har-utils'
 import { MDCSnackbar } from '@material/snackbar'
+import { buildHarFromString } from '@/utils/har-utils'
 
 @Component
 export default class FileUpload extends Vue {
@@ -85,8 +85,6 @@ export default class FileUpload extends Vue {
 
   // holds HAR input from textarea
   private harTextInput = ''
-  // holds file contents from HAR file upload
-  private harFile = ''
 
   // Material component reference
   private snackbarMDC: MDCSnackbar | null = null
@@ -97,7 +95,8 @@ export default class FileUpload extends Vue {
       return
     }
 
-    this.$emit('updateParsedHAR', parseHARFile(this.harTextInput))
+    const parsedHarStore = buildHarFromString(this.harTextInput)
+    this.$emit('updateParsedHAR', parsedHarStore)
   }
 
   processFileSelection(): void {
@@ -135,10 +134,12 @@ export default class FileUpload extends Vue {
     const reader = new FileReader()
     reader.addEventListener('load', (event) => {
       this.state.uploadProgress = null
-      // TODO: could also be ArrayBuffer type. Add type check
-      this.harFile = (event?.target?.result ? event.target.result : '') as string
-      this.$emit('updateParsedHAR', parseHARFile(this.harFile))
+      const rawHarData = (event?.target?.result ? event.target.result : '') as string
+      const parsedHarStore = buildHarFromString(rawHarData)
+
+      this.$emit('updateParsedHAR', parsedHarStore)
     })
+
     reader.addEventListener('progress', (event) => {
       if (event.loaded && event.total) {
         const percent = (event.loaded / event.total) * 100

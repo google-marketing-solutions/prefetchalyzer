@@ -16,8 +16,9 @@
 
 import fs from 'fs'
 import path from 'path'
+import { JsonObject } from '../models/app-data'
 
-export function loadTestObjectFromFile(fileName: string): Record<string, any> {
+export function loadTestObjectFromFile(fileName: string): JsonObject {
   const fileContent = fs.readFileSync(path.resolve(__dirname, `./data/${fileName}`)).toString()
   return JSON.parse(fileContent)
 }

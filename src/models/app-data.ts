@@ -18,9 +18,10 @@ import { Page } from './page'
 import { Resource } from './resource'
 
 export interface AppState {
-    // global state: has a parsed HAR file
     hasData: boolean;
     activeView: AppView;
+    pages: Page[];
+    requests: Resource[];
 }
 
 // used to transfer parsed HAR data from FileUpload to App
