@@ -26,7 +26,6 @@
             <div class="mdc-tab-scroller__scroll-content">
               <button class="mdc-tab mdc-tab--active" role="tab" v-for="view in navigation" :key="view.key" @click="setActiveView(view.key)">
                 <span class="mdc-tab__content">
-                  <!--<span class="mdc-tab__icon material-icons" aria-hidden="true">favorite</span>-->
                   <span class="mdc-tab__text-label">{{ view.label }}</span>
                 </span>
                 <span class="mdc-tab-indicator" :class="{ 'mdc-tab-indicator--active': view.key === state.activeView }">
@@ -42,18 +41,38 @@
     <main id="app">
       <FileUpload v-show="state.activeView === 'import'" @updateParsedHAR="updateParsedHAR" />
 
-      <div v-show="state.hasData && state.activeView === 'prefetch_opps'">
-        <PrefetchTable :pages="state.pages" :resources="state.requests" />
-        <PageSettings :pages="state.pages" @setTitle="updatePageTitle" />
-      </div>
+      <PrefetchTable v-show="state.hasData && state.activeView === 'prefetch_opps'" :pages="state.pages" :resources="state.requests" @openPageSettings="openPageSettings" />
 
       <About v-show="state.activeView === 'about'" />
+
+      <div class="page-settings mdc-dialog" ref="dialog">
+        <div class="mdc-dialog__container">
+          <div
+            class="page-settings__content mdc-dialog__surface"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="data-export"
+            aria-describedby="data-export-dialog-content"
+          >
+            <div class="mdc-dialog__content" id="data-export-dialog-content">
+              <PageSettings :pages="state.pages" @setTitle="updatePageTitle" />
+            </div>
+            <div class="mdc-dialog__actions">
+              <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="done">
+                <div class="mdc-button__ripple"></div>
+                <span class="mdc-button__label">Done</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+      </div>
     </main>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Ref } from 'vue-property-decorator'
 import { Page } from './models/page'
 import { HarStore } from '@/stores/har'
 import { AppState, AppTab, AppView } from './models/app-data'
@@ -61,6 +80,7 @@ import About from './components/about.vue'
 import FileUpload from './components/file-upload.vue'
 import PageSettings from './components/page-settings.vue'
 import PrefetchTable from './components/prefetch-table.vue'
+import { MDCDialog } from '@material/dialog'
 
 // Material components
 import { MDCTabBar } from '@material/tab-bar'
@@ -75,6 +95,8 @@ import { MDCTabBar } from '@material/tab-bar'
 })
 
 export default class App extends Vue {
+  @Ref() dialog!: HTMLElement
+
   private state: AppState = {
     hasData: false,
     activeView: 'import',
@@ -104,11 +126,12 @@ export default class App extends Vue {
 
   // Material component reference
   private navigationMDC: MDCTabBar | null = null
+  private dialogMDC: MDCDialog | null = null
 
   setActiveView(view: AppView) {
     this.state.activeView = view
     // check for tabs in navigation to update state
-    const navIndex = this.navigation.findIndex(tab => tab.key === this.state.activeView)
+    const navIndex = this.navigation.findIndex((tab) => tab.key === this.state.activeView)
     if (navIndex !== -1) {
       this.navigationMDC && this.navigationMDC.activateTab(navIndex)
     }
@@ -129,12 +152,22 @@ export default class App extends Vue {
     }
   }
 
+  openPageSettings(): void {
+    if (this.dialogMDC) {
+      this.dialogMDC.open()
+    }
+  }
+
   mounted() {
     // Material components initialization
     // TODO: check for correct lifecycle hook
     const navigation = document.querySelector('.navigation')
     if (navigation) {
       this.navigationMDC = new MDCTabBar(navigation)
+    }
+
+    if (this.dialog) {
+      this.dialogMDC = new MDCDialog(this.dialog)
     }
   }
 }
@@ -143,6 +176,7 @@ export default class App extends Vue {
 <style lang="scss">
 @use "@material/theme/mdc-theme";
 @use "@material/button/mdc-button";
+@use "@material/dialog/mdc-dialog";
 @use "@material/tab-bar/mdc-tab-bar";
 @use "@material/tab-scroller/mdc-tab-scroller";
 @use "@material/tab-indicator/mdc-tab-indicator";
@@ -200,5 +234,13 @@ main {
 hr {
   margin: 2rem 0;
   color: rgba(0, 0, 0, 0.87); // TODO: replace by mdc variable
+}
+
+// TODO: move dialog into PageSettings component for encapsulation
+.page-settings .page-settings__content {
+  @media (min-width: 592px) {
+    width: 80vw;
+    max-width: 960px;
+  }
 }
 </style>

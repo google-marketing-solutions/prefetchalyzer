@@ -15,13 +15,20 @@
 
 <template>
   <div>
-    <h2 class="mdc-typography--headline6">Pages</h2>
-    <ul>
+    <h2 class="mdc-typography--headline6">Pages in visited order</h2>
+    <p class="mdc-typography--body2">Edit the page labels here to update the titles in analysis view.</p>
+    <ol class="page-list">
       <li v-for="page in pages" :key="page.id">
-        <input type="text" v-model.lazy="page.label" />
-        <a :href="page.url">{{ page.url }}</a>
+        <label class="mdc-text-field mdc-text-field--filled mdc-text-field--label-floating">
+          <span class="mdc-text-field__ripple"></span>
+          <span class="mdc-floating-label mdc-floating-label--float-above" :id="'page-label-' + page.id">Page label</span>
+          <input class="mdc-text-field__input" type="text" :aria-labelledby="'page-label-' + page.id" v-model.lazy="page.label" />
+          <span class="mdc-line-ripple"></span>
+        </label>
+        <br />
+        <a class="page-url mdc-typography--body2" :href="page.url">{{ page.url }}</a>
       </li>
-    </ul>
+    </ol>
   </div>
 </template>
 
@@ -40,4 +47,15 @@ export default class FileUpload extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.page-list {
+  li:not(:first-child) {
+    margin-top: 1em;
+  }
+}
+
+.page-url {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+</style>

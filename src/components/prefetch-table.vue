@@ -18,8 +18,18 @@
     <div class="table-title">
       <h2 class="mdc-typography--headline5">Prefetching Opportunities</h2>
       <div class="table-title__actions">
+        <button class="mdc-button" @click="openPageSettings()">
+          <svg class="mdc-button__icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M12 10.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1c.61 0 1.1-.49 1.1-1.1s-.49-1.1-1.1-1.1zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19z"
+            />
+          </svg>
+          <span class="mdc-button__label">View pages</span>
+        </button>
+
         <div id="export-menu" class="mdc-menu-surface--anchor">
-          <button class="mdc-button" id="export-menu-button" @click="openExportMenu()">
+          <button class="mdc-button" @click="openExportMenu()">
             <svg class="mdc-button__icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
               <path d="M0 0h24v24H0z" fill="none" />
               <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" />
@@ -70,7 +80,7 @@
         Shorten URLs
       </label>
     </div>
-    <div class="mdc-data-table">
+    <div class="mdc-data-table prefetch-table">
       <div class="mdc-data-table__table-container">
         <table class="mdc-data-table__table" aria-label="Prefetching Analysis">
           <thead>
@@ -274,6 +284,10 @@ export default class PrefetchTable extends Vue {
     }
   }
 
+  openPageSettings() {
+    this.$emit('openPageSettings')
+  }
+
   openExportMenu() {
     if (this.exportMenuMDC) {
       this.exportMenuMDC.open = true
@@ -411,7 +425,6 @@ execAndWait\tentries.map(function(entry) { var link = document.createElement("li
 <style lang="scss">
 @use "~@material/data-table/mdc-data-table";
 @use "~@material/checkbox/mdc-checkbox";
-@use "~@material/dialog/mdc-dialog";
 @use "~@material/menu/mdc-menu";
 @use "~@material/menu-surface/mdc-menu-surface";
 @use "~@material/list/mdc-list";
@@ -448,8 +461,13 @@ textarea {
   justify-content: space-between;
   align-items: center;
 
-  &__actions > .mdc-button:not(:first-child) {
-    margin-left: 1rem;
+  &__actions {
+    display: flex;
+    flex-flow: row nowrap;
+
+    & > *:not(:first-child) {
+      margin-left: 1rem;
+    }
   }
 }
 
@@ -467,6 +485,10 @@ textarea {
       margin-left: 1rem;
     }
   }
+}
+
+.prefetch-table {
+  max-width: calc(100vw - 4rem);
 }
 
 .prefetch-export-output textarea {
