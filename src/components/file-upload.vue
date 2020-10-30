@@ -208,7 +208,7 @@ export default class FileUpload extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  min-height: calc(100vh - 4rem - 60px);
   border: 2px dashed transparent;
   transition: background-color 0.1s ease-out, border-color 0.2s ease-out;
 

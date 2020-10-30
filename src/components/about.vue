@@ -87,7 +87,6 @@
       For impactful visualization, all resources are first sorted by first appearance/page to prefetch in the user journey (path), and then by transferred size.
       This allows tool users to follow the navigation path and spot the largest resources at the top of each navigation step.
     </p>
-    <br />
   </div>
 </template>
 

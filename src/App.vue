@@ -239,8 +239,7 @@ header {
 }
 
 main {
-  height: 90vh;
-  max-height: calc(100vh - 4rem - 60px); // 60px approximation for header height
+  min-height: calc(100vh - 4rem - 60px); // 60px approximation for header height
   margin: 2rem auto;
   padding: 0 2rem;
 }
@@ -262,7 +261,7 @@ hr {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  min-height: calc(100vh - 4rem - 60px);
   opacity: 0.7;
 
   &__inner {
