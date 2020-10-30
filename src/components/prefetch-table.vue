@@ -81,7 +81,7 @@
       </label>
     </div>
     <div class="mdc-data-table prefetch-table">
-      <div class="mdc-data-table__table-container">
+      <div class="mdc-data-table__table-container prefetch-table__container">
         <table class="mdc-data-table__table" aria-label="Prefetching Analysis">
           <thead>
             <tr class="mdc-data-table__header-row">
@@ -344,12 +344,21 @@ export default class PrefetchTable extends Vue {
       splittedPath.splice(-1)
     }
 
+    let shortenedURL = ''
+
     // do not shorten paths with one sub-directory
     if (splittedPath.length < 3) {
-      return url
+      shortenedURL = url
     }
 
-    return `${splittedProtocol[0]}://${splittedPath[0]}/…/${splittedPath[splittedPath.length - 1]}`
+    shortenedURL = `${splittedProtocol[0]}://${splittedPath[0]}/…/${splittedPath[splittedPath.length - 1]}`
+
+    // final check for too long URLs
+    if (shortenedURL.length > 100) {
+      shortenedURL = shortenedURL.substr(0, 100) + '…'
+    }
+
+    return shortenedURL
   }
 
   generatePrefetchHTML() {
@@ -488,7 +497,18 @@ textarea {
 }
 
 .prefetch-table {
+  position: relative;
   max-width: calc(100vw - 4rem);
+
+  &__container::after {
+    content: ' ';
+    position: absolute;
+    top: 1px;
+    right: 0;
+    width: 1rem;
+    height: calc(100% - 2px);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0.8) 100%);
+  }
 }
 
 .prefetch-export-output textarea {
