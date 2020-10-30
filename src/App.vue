@@ -41,9 +41,24 @@
     <main id="app">
       <FileUpload v-show="state.activeView === 'import'" @updateParsedHAR="updateParsedHAR" />
 
-      <PrefetchTable v-show="state.hasData && state.activeView === 'prefetch_opps'" :pages="state.pages" :resources="state.requests" @openPageSettings="openPageSettings" />
+      <PrefetchTable
+        v-show="state.hasData && state.activeView === 'prefetch_opps'"
+        :pages="state.pages"
+        :resources="state.requests"
+        @openPageSettings="openPageSettings"
+      />
 
       <About v-show="state.activeView === 'about'" />
+
+      <div v-show="!state.hasData && state.activeView === 'prefetch_opps'" class="empty-view">
+        <div class="empty-view__inner">
+          <h1 class="mdc-typography--headline5">No data available</h1>
+          <p class="mdc-typography--body1">Import a HAR session to start analysis.</p>
+          <button class="mdc-button" @click="setActiveView('import')">
+            <span class="mdc-button__label">Import data</span>
+          </button>
+        </div>
+      </div>
 
       <div class="page-settings mdc-dialog" ref="dialog">
         <div class="mdc-dialog__container">
@@ -93,7 +108,6 @@ import { MDCTabBar } from '@material/tab-bar'
     PrefetchTable
   }
 })
-
 export default class App extends Vue {
   @Ref() dialog!: HTMLElement
 
@@ -241,6 +255,19 @@ hr {
   @media (min-width: 592px) {
     width: 80vw;
     max-width: 960px;
+  }
+}
+
+.empty-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  opacity: 0.7;
+
+  &__inner {
+    max-width: 40rem;
+    text-align: center;
   }
 }
 </style>
