@@ -140,9 +140,8 @@ export class HarStore {
   }
 
   /**
-   * Returns a list of resources based on the entry data
-   * TODO: Update with method params to enable filtering options on resources
-   */
+   * Returns a list of resources based on the entry data.
+  */
   getResources(): Array<Resource> {
     const urlPagesMap = this.getUrlPageOccurences()
     const resources: Record<ResourceURL, Resource> = {}
@@ -154,6 +153,7 @@ export class HarStore {
           cacheControl: entry.cacheControl,
           transferSize: entry.transferSize,
           pages: urlPagesMap[entry.url],
+          resourceType: entry.resourceType,
           selectedPrefetch: true,
           prefetchOn: null
         }
@@ -168,7 +168,6 @@ export class HarStore {
    */
   getPages(): Array<Page> {
     const pageTransferSizes = this.getPageTransferSizes()
-
     return this.pages
       .sort((a: HarPage, b: HarPage) => (a.startedDateTime > b.startedDateTime ? 1 : -1))
       .map((page: HarPage) => {

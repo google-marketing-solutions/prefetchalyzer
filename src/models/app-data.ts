@@ -15,7 +15,7 @@
  **/
 
 import { Page } from './page'
-import { Resource } from './resource'
+import { Resource, ResourceType } from './resource'
 
 export interface AppState {
     hasData: boolean;
@@ -41,4 +41,12 @@ export interface AppTab {
     label: string;
     // whether displaying this tab requires HAR data to be available
     requiresData: boolean;
+}
+
+export type ResourceTypeFilter = Record<ResourceType, boolean>
+
+export interface PrefetchTableFilters {
+    collapseUnselected: boolean;
+    shortenURLs: boolean;
+    resourceTypes: ResourceTypeFilter;
 }

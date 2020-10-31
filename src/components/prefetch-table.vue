@@ -52,6 +52,7 @@
         </div>
       </div>
     </div>
+
     <div class="filter-controls">
       <label class="filter-controls__label">
         <div class="mdc-checkbox mdc-data-table__row-checkbox">
@@ -79,6 +80,7 @@
         </div>
         Shorten URLs
       </label>
+      <ChipMultiSelect v-model="filters.resourceTypes" />
     </div>
     <div class="mdc-data-table prefetch-table">
       <div class="mdc-data-table__table-container prefetch-table__container">
@@ -188,12 +190,19 @@
 
 <script lang="ts">
 import { Page, PageId } from '@/models/page'
+import { PrefetchTableFilters } from '@/models/app-data'
 import { Resource, ResourceURL } from '@/models/resource'
 import { Component, Prop, Vue, Ref } from 'vue-property-decorator'
 import { MDCDialog } from '@material/dialog'
 import { MDCMenu } from '@material/menu'
+import ChipMultiSelect from './chip-multi-select.vue'
 
-@Component
+@Component({
+  components: {
+    ChipMultiSelect
+  }
+})
+
 export default class PrefetchTable extends Vue {
   @Prop() private pages!: Page[]
   @Prop() private resources!: Resource[]
@@ -204,11 +213,17 @@ export default class PrefetchTable extends Vue {
   private dialogMDC: MDCDialog | null = null
   private exportMenuMDC: MDCMenu | null = null
 
-  private filters = {
+  private filters: PrefetchTableFilters = {
     // whether un-selected rows should be hidden from the UI (default: shown, but grayed-out)
     collapseUnselected: false,
     // whether URLs shall be displayed shortened (example.com/.../file.js) in the table (default: shorten)
-    shortenURLs: true
+    shortenURLs: true,
+    resourceTypes: {
+      script: true,
+      stylesheet: true,
+      document: true,
+      font: true
+    }
   }
 
   private generated = {
@@ -219,6 +234,7 @@ export default class PrefetchTable extends Vue {
 
   get prefetchList(): Resource[] {
     const list = this.resources
+      .filter((resource: Resource) => this.filters.resourceTypes[resource.resourceType])
       // filter out resources already requested on page 1 (prefetch obsolete as it has no effect)
       .filter((resource: Resource) => !resource.pages.includes(this.pages[0].id))
       // mark page for prefetching

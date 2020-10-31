@@ -15,11 +15,12 @@
  **/
 
 import { PageId } from './page'
+import { ResourceType } from './resource'
 
 export interface HarEntry {
     pageRef: PageId;
     priority: string;
-    resourceType: string;
+    resourceType: ResourceType;
     method: string;
     url: string;
     httpVersion: string;

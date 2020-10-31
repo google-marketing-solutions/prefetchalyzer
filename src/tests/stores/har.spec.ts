@@ -183,6 +183,7 @@ export default function run() {
           cacheControl: null,
           transferSize: 189,
           pages: ['page_1'],
+          resourceType: 'document',
           selectedPrefetch: true,
           prefetchOn: null
         },
@@ -191,6 +192,7 @@ export default function run() {
           cacheControl: 'public, max-age=31536000',
           transferSize: 300,
           pages: ['page_1', 'page_2'],
+          resourceType: 'stylesheet',
           selectedPrefetch: true,
           prefetchOn: null
         },
@@ -199,6 +201,7 @@ export default function run() {
           cacheControl: 'max-age=0',
           transferSize: 200,
           pages: ['page_1'],
+          resourceType: 'script',
           selectedPrefetch: true,
           prefetchOn: null
         },
@@ -207,6 +210,7 @@ export default function run() {
           cacheControl: 'public, max-age=31536000',
           transferSize: 350,
           pages: ['page_2'],
+          resourceType: 'script',
           selectedPrefetch: true,
           prefetchOn: null
         }
