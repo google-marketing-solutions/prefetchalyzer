@@ -26,13 +26,13 @@ export function buildHarFromString(har: string): HarStore {
   try {
     rawHar = JSON.parse(har)
   } catch (e) {
-    throw new Error('Invalid JSON structure in HAR')
+    throw new Error('Error: Could not parse HAR as JSON, invalid JSON structure in HAR.')
   }
 
   if (typeof (rawHar.log) === 'undefined' ||
       typeof (rawHar.log.pages) === 'undefined' ||
       typeof (rawHar.log.entries) === 'undefined') {
-    throw new Error('Missing required HAR properties, log, pages or entries')
+    throw new Error('Error: Missing required HAR properties: log, pages or entries.')
   }
 
   return new HarStore(rawHar)

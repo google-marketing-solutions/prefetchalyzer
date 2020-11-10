@@ -25,6 +25,6 @@ export interface HarEntry {
     url: string;
     httpVersion: string;
     status: number;
-    cacheControl: string;
+    cacheControl: string | null;
     transferSize: number;
 }

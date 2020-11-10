@@ -54,6 +54,8 @@ export class HarStore {
   extractPage(entry: JsonObject): HarPage|null {
     const pagePattern = {
       startedDateTime: /(?<startedDateTime>.*)/,
+      // TODO: by spec, we can not assume that IDs are always in this format, and title is a URL.
+      // e.g. Firefox exports a HAR where the title is the actual page title shown in the browser.
       id: /(?<id>page_\d+)/,
       title: /(?<title>https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))/
     }
@@ -69,6 +71,8 @@ export class HarStore {
   extractEntry(entry: JsonObject): HarEntry|null {
     const baseEntryPattern = {
       pageref: /(?<pageRef>page_\d+)/,
+      // TODO: needs to include fallbacks for fields starting with underscore _, since these
+      // fields are not part of the HAR spec and Chrome-specific.
       _priority: /(?<priority>.*)/,
       _resourceType: /(?<resourceType>script|stylesheet|document|font)/,
       request: {

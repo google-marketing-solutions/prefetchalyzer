@@ -180,7 +180,7 @@ export default function run() {
       const expected = [
         {
           url: 'https://www.google.com/',
-          cacheControl: null,
+          cacheControl: 'n/a',
           transferSize: 189,
           pages: ['page_1'],
           resourceType: 'document',

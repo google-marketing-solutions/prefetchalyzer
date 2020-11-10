@@ -95,8 +95,7 @@ export default class FileUpload extends Vue {
       return
     }
 
-    const parsedHarStore = buildHarFromString(this.harTextInput)
-    this.$emit('updateParsedHAR', parsedHarStore)
+    this.parseHAR(this.harTextInput)
   }
 
   processFileSelection(): void {
@@ -125,19 +124,11 @@ export default class FileUpload extends Vue {
   }
 
   processFile(file: File): void {
-    // TODO: add type check
-    /* if (file.type && file.type.indexOf('json') === -1) {
-         console.log('File is not a JSON file.', file.type, file)
-         return
-       } */
-
     const reader = new FileReader()
     reader.addEventListener('load', (event) => {
       this.state.uploadProgress = null
       const rawHarData = (event?.target?.result ? event.target.result : '') as string
-      const parsedHarStore = buildHarFromString(rawHarData)
-
-      this.$emit('updateParsedHAR', parsedHarStore)
+      this.parseHAR(rawHarData)
     })
 
     reader.addEventListener('progress', (event) => {
@@ -147,6 +138,19 @@ export default class FileUpload extends Vue {
       }
     })
     reader.readAsText(file)
+  }
+
+  parseHAR(rawHarString: string): void {
+    try {
+      const parsedHarStore = buildHarFromString(rawHarString)
+      this.$emit('updateParsedHAR', parsedHarStore)
+    } catch (e) {
+      if (e instanceof Error) {
+        this.showSnackbar(e.message)
+      } else {
+        throw e
+      }
+    }
   }
 
   preventDragDefaults(e: Event): void {
@@ -179,7 +183,6 @@ export default class FileUpload extends Vue {
   }
 
   mounted() {
-    // TODO: check for correct lifecycle hook
     if (this.snackbar) {
       this.snackbarMDC = new MDCSnackbar(this.snackbar)
     }

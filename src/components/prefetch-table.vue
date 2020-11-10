@@ -89,7 +89,7 @@
             <tr class="mdc-data-table__header-row">
               <th class="mdc-data-table__header-cell mdc-data-table__header-cell--checkbox" role="columnheader" scope="col"></th>
               <th class="mdc-data-table__header-cell" role="columnheader" scope="col">File</th>
-              <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Cache</th>
+              <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Cache Control</th>
               <th class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric" role="columnheader" scope="col">Size</th>
               <th
                 class="mdc-data-table__header-cell mdc-data-table__header-cell--numeric pagecolumn bg-lightgrey"
@@ -123,7 +123,7 @@
                 </div>
               </td>
               <th class="mdc-data-table__cell" scope="row" :title="asset.url">{{ getDisplayedURL(asset.url) }}</th>
-              <td class="mdc-data-table__cell">{{ asset.cacheControl }}</td>
+              <td class="mdc-data-table__cell">{{ asset.cacheControl ? asset.cacheControl : 'n/a' }}</td>
               <td class="mdc-data-table__cell mdc-data-table__cell--numeric">{{ formatSize(asset.transferSize) }}</td>
               <td
                 class="mdc-data-table__cell mdc-data-table__cell--numeric bg-lightgrey"
@@ -191,7 +191,7 @@
 <script lang="ts">
 import { Page, PageId } from '@/models/page'
 import { PrefetchTableFilters } from '@/models/app-data'
-import { Resource, ResourceURL } from '@/models/resource'
+import { Resource, ResourceTypeLinkMapping, ResourceURL } from '@/models/resource'
 import { Component, Prop, Vue, Ref } from 'vue-property-decorator'
 import { MDCDialog } from '@material/dialog'
 import { MDCMenu } from '@material/menu'
@@ -202,7 +202,6 @@ import ChipMultiSelect from './chip-multi-select.vue'
     ChipMultiSelect
   }
 })
-
 export default class PrefetchTable extends Vue {
   @Prop() private pages!: Page[]
   @Prop() private resources!: Resource[]
@@ -291,7 +290,6 @@ export default class PrefetchTable extends Vue {
   // METHODS
 
   mounted() {
-    // TODO: check if mount is the correct lifecycle hook to init components
     if (this.dialog) {
       this.dialogMDC = new MDCDialog(this.dialog)
     }
@@ -343,8 +341,7 @@ export default class PrefetchTable extends Vue {
   }
 
   formatPercentage(percentValue: number): string {
-    // TODO: remove Number() typecasts in favor of data verification from HAR import (in HAR parsing method)
-    return `<span class="percentValue" style="opacity: ${Number(percentValue) / 100 + 0.5}">${Number(percentValue)}%</span>`
+    return `<span class="percentValue" style="opacity: ${percentValue / 100 + 0.5}">${percentValue}%</span>`
   }
 
   getDisplayedURL(url: ResourceURL): string {
@@ -386,9 +383,10 @@ export default class PrefetchTable extends Vue {
         html += `${this.pagesObject[pageId].label} (${this.pagesObject[pageId].url}):
 ----------------------
 `
+        let asAttribute = ''
         assets.forEach((asset) => {
-          // TODO: even better with type, e.g. as=document – required for it to work correctly in some browsers
-          html += `<link rel="prefetch" href="${asset.url}">
+          asAttribute = asset.resourceType in ResourceTypeLinkMapping ? ` as="${ResourceTypeLinkMapping[asset.resourceType]}"` : ''
+          html += `<link rel="prefetch" href="${asset.url}"${asAttribute}>
 `
         })
         html += `
@@ -429,8 +427,11 @@ navigate\t${this.pagesObject[pageId].url}
 `
       if (assets.length) {
         html += 'exec\tvar entries=['
-        // TODO: add as=type to prefetch statements
-        assets.forEach((asset) => (html += `{rel:"prefetch",href:"${asset.url}"}`))
+        let asAttribute = ''
+        assets.forEach((asset) => {
+          asAttribute = asset.resourceType in ResourceTypeLinkMapping ? `,as:"${ResourceTypeLinkMapping[asset.resourceType]}"` : ''
+          html += `{rel:"prefetch",href:"${asset.url}"${asAttribute}}`
+        })
         html += `];
 execAndWait\tentries.map(function(entry) { var link = document.createElement("link"); const hint = Object.assign(link, entry); document.head.append(hint); return;});
 

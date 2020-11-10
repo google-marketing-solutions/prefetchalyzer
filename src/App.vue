@@ -174,7 +174,6 @@ export default class App extends Vue {
 
   mounted() {
     // Material components initialization
-    // TODO: check for correct lifecycle hook
     const navigation = document.querySelector('.navigation')
     if (navigation) {
       this.navigationMDC = new MDCTabBar(navigation)

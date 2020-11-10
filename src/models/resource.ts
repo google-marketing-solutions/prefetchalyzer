@@ -18,14 +18,28 @@ import { PageId } from './page'
 
 export type ResourceType = 'document' | 'font' | 'script' | 'stylesheet'
 
+export type ResourceURL = string
+
 export type Resource = {
-    url: ResourceURL;
-    cacheControl: string; // TODO: make nullable for unavailable header?
-    transferSize: number;
-    pages: PageId[];
-    selectedPrefetch: boolean;
-    prefetchOn: PageId | null;
-    resourceType: ResourceType;
+  url: ResourceURL;
+  cacheControl: string | null;
+  transferSize: number;
+  pages: PageId[];
+  selectedPrefetch: boolean;
+  prefetchOn: PageId | null;
+  resourceType: ResourceType;
 }
 
-export type ResourceURL = string
+/**
+ * Mapping from HarEntry resourceType field (added in HAR e.g. as _resourceType when exported by Chrome)
+ * to the valid values used in the <link> as attribute for resource hints.
+ *
+ * Valid values for as attribute on <link>: https://www.w3.org/TR/preload/#as-attribute
+ * Full list of values: https://fetch.spec.whatwg.org/#concept-request-destination
+ */
+export const ResourceTypeLinkMapping: Record<ResourceType, string> = {
+  document: 'document',
+  font: 'font',
+  script: 'script',
+  stylesheet: 'style'
+}

@@ -25,7 +25,7 @@ export default function run() {
 
       chai.expect(() => {
         buildHarFromString(HARInput)
-      }).to.throw('Invalid JSON structure in HAR')
+      }).to.throw('Error: Could not parse HAR as JSON, invalid JSON structure in HAR.')
     })
 
     it('Throws an exception when HAR is missing pages and entries properties', () => {
@@ -33,7 +33,7 @@ export default function run() {
 
       chai.expect(() => {
         buildHarFromString(HARInput)
-      }).to.throw('Missing required HAR properties, log, pages or entries')
+      }).to.throw('Error: Missing required HAR properties: log, pages or entries.')
     })
 
     it('Should create a new HarStore instance', () => {

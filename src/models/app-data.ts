@@ -32,6 +32,7 @@ export interface ParsedHAR {
 
 export type AppView = 'import' | 'about' | 'prefetch_opps'
 
+// eslint-disable-next-line
 export type JsonObject = Record<string, any>;
 
 export interface AppTab {
