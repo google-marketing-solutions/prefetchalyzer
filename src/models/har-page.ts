@@ -15,9 +15,11 @@
  **/
 
 import { PageId } from './page'
+import { ResourceURL } from './resource'
 
 export interface HarPage {
     startedDateTime: string;
     id: PageId;
     title: string;
+    url: ResourceURL | null;
 }

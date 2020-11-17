@@ -15,8 +15,8 @@
  **/
 
 import chai from 'chai'
-import { buildHarFromString } from '../../utils/har-utils'
-import { loadTestObjectFromFile } from '../test-utils'
+import { buildHarFromString, convertMimeTypeToResourceType } from '@/utils/har-utils'
+import { loadTestObjectFromFile } from '@/tests/test-utils'
 
 export default function run() {
   describe('buildHarFromString tests', () => {
@@ -44,6 +44,43 @@ export default function run() {
       chai.expect(harStore).to.have.property('pages')
       chai.expect(harStore.entries).to.be.an('array').that.is.not.empty
       chai.expect(harStore.pages).to.be.an('array').that.is.not.empty
+    })
+  })
+
+  describe('convertMimeTypeToResourceType tests', () => {
+    it('Should return ResourceType strings for valid MIME types', () => {
+      let convertedType = convertMimeTypeToResourceType('text/html')
+      chai.expect(convertedType).to.equal('document')
+
+      convertedType = convertMimeTypeToResourceType('font/otf')
+      chai.expect(convertedType).to.equal('font')
+      convertedType = convertMimeTypeToResourceType('font/ttf')
+      chai.expect(convertedType).to.equal('font')
+      convertedType = convertMimeTypeToResourceType('font/woff')
+      chai.expect(convertedType).to.equal('font')
+      convertedType = convertMimeTypeToResourceType('font/woff2')
+      chai.expect(convertedType).to.equal('font')
+      convertedType = convertMimeTypeToResourceType('application/vnd.ms-fontobject')
+      chai.expect(convertedType).to.equal('font')
+
+      convertedType = convertMimeTypeToResourceType('application/javascript')
+      chai.expect(convertedType).to.equal('script')
+      convertedType = convertMimeTypeToResourceType('text/javascript')
+      chai.expect(convertedType).to.equal('script')
+
+      convertedType = convertMimeTypeToResourceType('text/css')
+      chai.expect(convertedType).to.equal('stylesheet')
+    })
+
+    it('Should return NULL for unexisting or invalid MIME types', () => {
+      let convertedType = convertMimeTypeToResourceType('none')
+      chai.expect(convertedType).to.be.null
+
+      convertedType = convertMimeTypeToResourceType('application/json')
+      chai.expect(convertedType).to.be.null
+
+      convertedType = convertMimeTypeToResourceType('javascript')
+      chai.expect(convertedType).to.be.null
     })
   })
 }

@@ -14,8 +14,9 @@
  *
  **/
 
-import { HarStore } from '../stores/har'
+import { HarStore } from '@/stores/har'
 import { JsonObject } from '@/models/app-data'
+import { ResourceTypeMimeMapping, ResourceType } from '@/models/resource'
 
 /**
  * A simple factory for loading a string input into a valid HAR store instance
@@ -36,4 +37,23 @@ export function buildHarFromString(har: string): HarStore {
   }
 
   return new HarStore(rawHar)
+}
+
+export function convertMimeTypeToResourceType(harMimeType: string): ResourceType | null {
+  let match: ResourceType | null = null
+
+  for (const [resourceType, mimeTypes] of Object.entries(ResourceTypeMimeMapping)) {
+    for (const mimeType of mimeTypes) {
+      if (harMimeType.indexOf(mimeType) > -1) {
+        match = resourceType as ResourceType
+        break
+      }
+    }
+
+    if (match) {
+      break
+    }
+  }
+
+  return match
 }

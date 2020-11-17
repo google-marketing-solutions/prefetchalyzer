@@ -14,8 +14,8 @@
  *
  **/
 
-import harStoreTests from './stores/har.spec'
-import harUtilTests from './utils/har-utils.spec'
+import harStoreTests from '@/tests/stores/har.spec'
+import harUtilTests from '@/tests/utils/har-utils.spec'
 
 describe('HarStore tests', function() {
   harStoreTests()

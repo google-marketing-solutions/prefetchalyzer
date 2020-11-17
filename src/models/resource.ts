@@ -23,8 +23,8 @@ export type ResourceURL = string
 export type Resource = {
   url: ResourceURL;
   cacheControl: string | null;
-  transferSize: number;
-  pages: PageId[];
+  size: number;
+  pages: Set<PageId>;
   selectedPrefetch: boolean;
   prefetchOn: PageId | null;
   resourceType: ResourceType;
@@ -42,4 +42,16 @@ export const ResourceTypeLinkMapping: Record<ResourceType, string> = {
   font: 'font',
   script: 'script',
   stylesheet: 'style'
+}
+
+/**
+ * Mapping from HarEntry resourceType field to valid MIME types for the respective resource.
+ *
+ * Values taken from https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+ */
+export const ResourceTypeMimeMapping: Record<ResourceType, string[]> = {
+  document: ['text/html'],
+  font: ['font/otf', 'font/ttf', 'font/woff', 'font/woff2', 'application/vnd.ms-fontobject'],
+  script: ['application/javascript', 'text/javascript'],
+  stylesheet: ['text/css']
 }

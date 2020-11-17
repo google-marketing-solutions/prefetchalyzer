@@ -19,8 +19,8 @@ export interface Page {
     // TODO: add 'selected' property to allow removing pages from the session (for analysis)
     id: PageId;
     label: string;
-    url: string;
-    transferSize: number;
+    url: string | null;
+    size: number;
 }
 
 export type PageId = string

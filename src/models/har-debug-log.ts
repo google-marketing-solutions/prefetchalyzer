@@ -14,17 +14,22 @@
  *
  **/
 
-import { PageId } from './page'
-import { ResourceType } from './resource'
+import { JsonObject } from './app-data'
 
-export interface HarEntry {
-    pageRef: PageId;
-    priority: string | null;
-    resourceType: ResourceType;
-    method: string;
-    url: string;
-    httpVersion: string;
-    status: number;
-    cacheControl: string | null;
-    size: number;
+export interface HarDebugLog {
+    hasTransferSize: boolean;
+    hasResourceType: boolean;
+    invalidEntries: InvalidItem[];
+    invalidPages: InvalidItem[];
+    statistics: {
+        totalPages: number;
+        validPages: number;
+        totalEntries: number;
+        validEntries: number;
+    };
+}
+
+export interface InvalidItem {
+    item: JsonObject;
+    issue: string;
 }

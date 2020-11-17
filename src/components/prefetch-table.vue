@@ -124,7 +124,7 @@
               </td>
               <th class="mdc-data-table__cell" scope="row" :title="asset.url">{{ getDisplayedURL(asset.url) }}</th>
               <td class="mdc-data-table__cell">{{ asset.cacheControl ? asset.cacheControl : 'n/a' }}</td>
-              <td class="mdc-data-table__cell mdc-data-table__cell--numeric">{{ formatSize(asset.transferSize) }}</td>
+              <td class="mdc-data-table__cell mdc-data-table__cell--numeric">{{ formatSize(asset.size) }}</td>
               <td
                 class="mdc-data-table__cell mdc-data-table__cell--numeric bg-lightgrey"
                 v-for="page in pages"
@@ -235,11 +235,11 @@ export default class PrefetchTable extends Vue {
     const list = this.resources
       .filter((resource: Resource) => this.filters.resourceTypes[resource.resourceType])
       // filter out resources already requested on page 1 (prefetch obsolete as it has no effect)
-      .filter((resource: Resource) => !resource.pages.includes(this.pages[0].id))
+      .filter((resource: Resource) => !resource.pages.has(this.pages[0].id))
       // mark page for prefetching
       .map((resource) => {
         for (let i = 1; i < this.pages.length; i++) {
-          if (resource.pages.includes(this.pages[i].id)) {
+          if (resource.pages.has(this.pages[i].id)) {
             resource.prefetchOn = this.pages[i - 1].id
             break
           }
@@ -247,7 +247,7 @@ export default class PrefetchTable extends Vue {
         return resource
       })
       // sort by size DESC
-      .sort((a, b) => (a.transferSize < b.transferSize ? 1 : a.transferSize > b.transferSize ? -1 : 0))
+      .sort((a, b) => (a.size < b.size ? 1 : a.size > b.size ? -1 : 0))
       // sort by prefetching path ASC
       .sort((a, b) => {
         // TODO: quickfix to get it working for now with TS nullable type check
@@ -284,7 +284,7 @@ export default class PrefetchTable extends Vue {
   }
 
   get totalSize(): string {
-    return this.formatSize(this.selectedPrefetchList.reduce((sum: number, current: Resource) => (sum += current.transferSize), 0))
+    return this.formatSize(this.selectedPrefetchList.reduce((sum: number, current: Resource) => (sum += current.size), 0))
   }
 
   // METHODS
@@ -322,8 +322,8 @@ export default class PrefetchTable extends Vue {
   prefetchTask(page: Page, asset: Resource): string {
     if (page.id === asset.prefetchOn) {
       return '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 10H6.83L9 7.83l1.41-1.41L9 5l-6 6 6 6 1.41-1.41L9 14.17 6.83 12H16c1.65 0 3 1.35 3 3v4h2v-4c0-2.76-2.24-5-5-5z"/></svg>'
-    } else if (asset.pages.includes(page.id)) {
-      return this.formatPercentage(Math.ceil((asset.transferSize / page.transferSize) * 1000) / 10)
+    } else if (asset.pages.has(page.id)) {
+      return this.formatPercentage(Math.ceil((asset.size / page.size) * 1000) / 10)
     }
     return '—'
   }
@@ -331,13 +331,13 @@ export default class PrefetchTable extends Vue {
   // get total saved transfer size for a given page (via PageId)
   totalPrefetchSavings(pageId: PageId): number {
     return this.prefetchList
-      .filter((resource) => resource.selectedPrefetch && resource.pages.includes(pageId))
-      .reduce((sum, current) => (sum += current.transferSize), 0)
+      .filter((resource) => resource.selectedPrefetch && resource.pages.has(pageId))
+      .reduce((sum, current) => (sum += current.size), 0)
   }
 
   // get total savings for prefetching selected resources in percent
   totalPrefetchSavingsPercentage(pageId: PageId) {
-    return Math.round((this.totalPrefetchSavings(pageId) / this.pagesObject[pageId].transferSize) * 1000) / 10
+    return Math.round((this.totalPrefetchSavings(pageId) / this.pagesObject[pageId].size) * 1000) / 10
   }
 
   formatPercentage(percentValue: number): string {

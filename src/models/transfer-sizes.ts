@@ -14,4 +14,6 @@
  *
  **/
 
-export type TransferSizes = Record<string, number>
+import { PageId } from './page'
+
+export type TransferSizes = Record<PageId, number>
