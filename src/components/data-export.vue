@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import { PagesByPageId, ResourcesByPage } from '@/models/app-data'
-import { ResourceTypeLinkMapping } from '@/models/resource'
+import { generatePrefetchHTML, generateWPTScript } from '@/utils/export-utils'
 import { MDCDialog } from '@material/dialog'
 import { Component, Prop, Ref, Vue } from 'vue-property-decorator'
 
@@ -85,11 +85,11 @@ export default class DataExport extends Vue {
   }
 
   get prefetchHTML(): string {
-    return this.generatePrefetchHTML()
+    return generatePrefetchHTML(this.pages, this.resources)
   }
 
   get wptScript(): string {
-    return this.generateWPTScript()
+    return generateWPTScript(this.pages, this.resources)
   }
 
   setOpenState(setOpen: boolean) {
@@ -111,68 +111,6 @@ export default class DataExport extends Vue {
 
   showWPT() {
     this.output = this.wptScript
-  }
-
-  generatePrefetchHTML(): string {
-    let html = ''
-
-    for (const [pageId, assets] of Object.entries(this.resources)) {
-      if (assets.length) {
-        html += `${this.pages[pageId].label} (${this.pages[pageId].url}):
-----------------------
-`
-        let asAttribute = ''
-        assets.forEach((asset) => {
-          asAttribute = asset.resourceType in ResourceTypeLinkMapping ? ` as="${ResourceTypeLinkMapping[asset.resourceType]}"` : ''
-          html += `<link rel="prefetch" href="${asset.url}"${asAttribute}>
-`
-        })
-        html += `
-
-`
-      }
-    }
-    return html
-  }
-
-  generateWPTScript(): string {
-    let html = `// NO PREFETCHING
-// ----------------------
-// Script start
-`
-    Object.values(this.pages).forEach(
-      (page) =>
-        (html += `setEventName\t${page.label}
-navigate\t${page.url}
-
-`)
-    )
-    html += `// Script end
-
-// WITH PREFETCHING
-// ----------------------
-// Script start
-`
-    for (const [pageId, assets] of Object.entries(this.resources)) {
-      html += `setEventName\t${this.pages[pageId].label}
-navigate\t${this.pages[pageId].url}
-
-`
-      if (assets.length) {
-        html += 'exec\tvar entries=['
-        let asAttribute = ''
-        assets.forEach((asset) => {
-          asAttribute = asset.resourceType in ResourceTypeLinkMapping ? `,as:"${ResourceTypeLinkMapping[asset.resourceType]}"` : ''
-          html += `{rel:"prefetch",href:"${asset.url}"${asAttribute}}`
-        })
-        html += `];
-execAndWait\tentries.map(function(entry) { var link = document.createElement("link"); const hint = Object.assign(link, entry); document.head.append(hint); return;});
-
-`
-      }
-    }
-    html += '// Script end'
-    return html
   }
 }
 </script>
