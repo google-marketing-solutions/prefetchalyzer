@@ -14,7 +14,7 @@
  *
  **/
 
-import { Page } from './page'
+import { Page, PageId } from './page'
 import { Resource, ResourceType } from './resource'
 
 export interface AppState {
@@ -51,3 +51,7 @@ export interface PrefetchTableFilters {
     shortenURLs: boolean;
     resourceTypes: ResourceTypeFilter;
 }
+
+export type ResourcesByPage = Record<PageId, Resource[]>
+
+export type PagesByPageId = Record<PageId, Page>

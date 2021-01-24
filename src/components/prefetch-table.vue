@@ -28,28 +28,13 @@
           <span class="mdc-button__label">View pages</span>
         </button>
 
-        <div id="export-menu" class="mdc-menu-surface--anchor">
-          <button class="mdc-button" @click="openExportMenu()">
-            <svg class="mdc-button__icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-              <path d="M0 0h24v24H0z" fill="none" />
-              <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" />
-            </svg>
-            <span class="mdc-button__label">Export</span>
-          </button>
-
-          <div class="mdc-menu mdc-menu-surface" ref="exportMenu">
-            <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
-              <li class="mdc-list-item" role="menuitem" @click="generatePrefetchHTML()">
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">Generate prefetch HTML</span>
-              </li>
-              <li class="mdc-list-item" role="menuitem" @click="generateWPTScript()">
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">Generate WebPageTest script</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <button class="mdc-button" @click="openExport()">
+          <svg class="mdc-button__icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" />
+          </svg>
+          <span class="mdc-button__label">Export</span>
+        </button>
       </div>
     </div>
 
@@ -153,65 +138,29 @@
         </table>
       </div>
     </div>
-
-    <div class="mdc-dialog" ref="dialog">
-      <div class="mdc-dialog__container">
-        <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true" aria-labelledby="data-export" aria-describedby="data-export-dialog-content">
-          <div class="mdc-dialog__content" id="data-export-dialog-content">
-            <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label prefetch-export-output">
-              <span class="mdc-text-field__resizer">
-                <textarea
-                  v-model="generated.prefetchExport"
-                  class="mdc-text-field__input"
-                  rows="20"
-                  cols="120"
-                  aria-label="Label"
-                  placeholder="Export output is generated here ..."
-                ></textarea>
-              </span>
-              <span class="mdc-notched-outline">
-                <span class="mdc-notched-outline__leading"></span>
-                <span class="mdc-notched-outline__trailing"></span>
-              </span>
-            </label>
-          </div>
-          <div class="mdc-dialog__actions">
-            <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
-              <div class="mdc-button__ripple"></div>
-              <span class="mdc-button__label">Close</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="mdc-dialog__scrim"></div>
-    </div>
+    <DataExport :open.sync="isExportOpen" :pages="pagesObject" :resources="selectedPrefetchAssetsByPage" />
   </div>
 </template>
 
 <script lang="ts">
 import { Page, PageId } from '@/models/page'
-import { PrefetchTableFilters } from '@/models/app-data'
-import { Resource, ResourceTypeLinkMapping, ResourceURL } from '@/models/resource'
-import { Component, Prop, Vue, Ref } from 'vue-property-decorator'
-import { MDCDialog } from '@material/dialog'
-import { MDCMenu } from '@material/menu'
+import { PagesByPageId, PrefetchTableFilters, ResourcesByPage } from '@/models/app-data'
+import { Resource, ResourceURL } from '@/models/resource'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import ChipMultiSelect from './chip-multi-select.vue'
+import DataExport from './data-export.vue'
 
 @Component({
   components: {
-    ChipMultiSelect
+    ChipMultiSelect,
+    DataExport
   }
 })
 export default class PrefetchTable extends Vue {
   @Prop() private pages!: Page[]
   @Prop() private resources!: Resource[]
-  @Ref() dialog!: HTMLElement
-  @Ref() exportMenu!: HTMLElement
 
-  // Material component reference
-  private dialogMDC: MDCDialog | null = null
-  private exportMenuMDC: MDCMenu | null = null
-
+  private isExportOpen = false
   private filters: PrefetchTableFilters = {
     // whether un-selected rows should be hidden from the UI (default: shown, but grayed-out)
     collapseUnselected: false,
@@ -223,12 +172,6 @@ export default class PrefetchTable extends Vue {
       document: true,
       font: true
     }
-  }
-
-  private generated = {
-    // holds generated output as requested, e.g.
-    // WPT script or prefetch HTML output
-    prefetchExport: ''
   }
 
   get prefetchList(): Resource[] {
@@ -262,14 +205,14 @@ export default class PrefetchTable extends Vue {
     return this.prefetchList.filter((asset) => asset.selectedPrefetch)
   }
 
-  get pagesObject(): Record<PageId, Page> {
-    const pagesObject: Record<PageId, Page> = {}
+  get pagesObject(): PagesByPageId {
+    const pagesObject: PagesByPageId = {}
     this.pages.forEach((page) => (pagesObject[page.id] = page))
     return pagesObject
   }
 
-  get selectedPrefetchAssetsByPage(): Record<PageId, Resource[]> {
-    const assetsByPage: Record<PageId, Resource[]> = {}
+  get selectedPrefetchAssetsByPage(): ResourcesByPage {
+    const assetsByPage: ResourcesByPage = {}
     this.pages.forEach((page) => (assetsByPage[page.id] = []))
     this.selectedPrefetchList.forEach((asset) => {
       if (asset.prefetchOn) {
@@ -289,23 +232,12 @@ export default class PrefetchTable extends Vue {
 
   // METHODS
 
-  mounted() {
-    if (this.dialog) {
-      this.dialogMDC = new MDCDialog(this.dialog)
-    }
-    if (this.exportMenu) {
-      this.exportMenuMDC = new MDCMenu(this.exportMenu)
-    }
-  }
-
   openPageSettings() {
     this.$emit('openPageSettings')
   }
 
-  openExportMenu() {
-    if (this.exportMenuMDC) {
-      this.exportMenuMDC.open = true
-    }
+  openExport() {
+    this.isExportOpen = true
   }
 
   // readable file size
@@ -373,86 +305,12 @@ export default class PrefetchTable extends Vue {
 
     return shortenedURL
   }
-
-  generatePrefetchHTML() {
-    this.generated.prefetchExport = ''
-    let html = ''
-
-    for (const [pageId, assets] of Object.entries(this.selectedPrefetchAssetsByPage)) {
-      if (assets.length) {
-        html += `${this.pagesObject[pageId].label} (${this.pagesObject[pageId].url}):
-----------------------
-`
-        let asAttribute = ''
-        assets.forEach((asset) => {
-          asAttribute = asset.resourceType in ResourceTypeLinkMapping ? ` as="${ResourceTypeLinkMapping[asset.resourceType]}"` : ''
-          html += `<link rel="prefetch" href="${asset.url}"${asAttribute}>
-`
-        })
-        html += `
-
-`
-      }
-    }
-    this.generated.prefetchExport = html
-
-    if (this.dialogMDC) {
-      this.dialogMDC.open()
-    }
-  }
-
-  generateWPTScript() {
-    this.generated.prefetchExport = ''
-    let html = `// NO PREFETCHING
-// ----------------------
-// Script start
-`
-    this.pages.forEach(
-      (page) =>
-        (html += `setEventName\t${page.label}
-navigate\t${page.url}
-
-`)
-    )
-    html += `// Script end
-
-// WITH PREFETCHING
-// ----------------------
-// Script start
-`
-    for (const [pageId, assets] of Object.entries(this.selectedPrefetchAssetsByPage)) {
-      html += `setEventName\t${this.pagesObject[pageId].label}
-navigate\t${this.pagesObject[pageId].url}
-
-`
-      if (assets.length) {
-        html += 'exec\tvar entries=['
-        let asAttribute = ''
-        assets.forEach((asset) => {
-          asAttribute = asset.resourceType in ResourceTypeLinkMapping ? `,as:"${ResourceTypeLinkMapping[asset.resourceType]}"` : ''
-          html += `{rel:"prefetch",href:"${asset.url}"${asAttribute}}`
-        })
-        html += `];
-execAndWait\tentries.map(function(entry) { var link = document.createElement("link"); const hint = Object.assign(link, entry); document.head.append(hint); return;});
-
-`
-      }
-    }
-    html += '// Script end'
-    this.generated.prefetchExport = html
-
-    if (this.dialogMDC) {
-      this.dialogMDC.open()
-    }
-  }
 }
 </script>
 
 <style lang="scss">
 @use "~@material/data-table/mdc-data-table";
 @use "~@material/checkbox/mdc-checkbox";
-@use "~@material/menu/mdc-menu";
-@use "~@material/menu-surface/mdc-menu-surface";
 @use "~@material/list/mdc-list";
 
 textarea {
@@ -526,9 +384,5 @@ textarea {
     height: calc(100% - 2px);
     background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0.8) 100%);
   }
-}
-
-.prefetch-export-output textarea {
-  font-family: 'Roboto Mono', 'Consolas', 'Courier New', Courier, monospace;
 }
 </style>
