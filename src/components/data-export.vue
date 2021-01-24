@@ -18,14 +18,27 @@
     <div class="mdc-dialog__container">
       <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true" aria-labelledby="data-export" aria-describedby="data-export-dialog-content">
         <div class="mdc-dialog__content" id="data-export-dialog-content">
-          <button class="mdc-button" @click="showHTML()">
-            <span class="mdc-button__label">HTML Prefetch</span>
-          </button>
-          <button class="mdc-button" @click="showWPT()">
-            <span class="mdc-button__label">WebPageTest Script</span>
-          </button>
+          <nav class="mdc-tab-bar" role="tablist" ref="tabbar">
+            <div class="mdc-tab-scroller">
+              <div class="mdc-tab-scroller__scroll-area">
+                <div class="mdc-tab-scroller__scroll-content">
+                  <button class="mdc-tab mdc-tab--active" role="tab" v-for="view in navigation" :key="view.key" @click="setActiveView(view)">
+                    <span class="mdc-tab__content">
+                      <span class="mdc-tab__text-label">{{ view.label }}</span>
+                    </span>
+                    <span class="mdc-tab-indicator" :class="{ 'mdc-tab-indicator--active': view.key === activeView.key }">
+                      <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                    </span>
+                    <span class="mdc-tab__ripple"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </nav>
 
-          <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label prefetch-export-output">
+          <p>{{ output === '' ? 'Please select an export type above.' : activeView.instructions }}</p>
+
+          <label v-if="output !== ''" class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea mdc-text-field--no-label prefetch-export-output">
             <span class="mdc-text-field__resizer">
               <textarea
                 v-model="output"
@@ -58,7 +71,15 @@
 import { PagesByPageId, ResourcesByPage } from '@/models/app-data'
 import { generatePrefetchHTML, generateWPTScript } from '@/utils/export-utils'
 import { MDCDialog } from '@material/dialog'
+import { MDCTabBar } from '@material/tab-bar'
 import { Component, Prop, Ref, Vue } from 'vue-property-decorator'
+
+interface DataExportTab {
+  key: string;
+  label: string;
+  instructions: string;
+  output: Function;
+}
 
 @Component<DataExport>({
   watch: {
@@ -72,13 +93,35 @@ export default class DataExport extends Vue {
   @Prop() private pages!: PagesByPageId
   @Prop() private resources!: ResourcesByPage
   @Ref() dialog!: HTMLElement
+  @Ref() tabbar!: HTMLElement
 
+  private navigation: DataExportTab[] = [
+    {
+      key: 'html',
+      label: 'HTML Prefetch',
+      instructions: 'Insert the HTML code into the <head> section of the respective page to enable prefetching of the selected resources on that page.',
+      output: this.getHTML
+    },
+    {
+      key: 'wpt',
+      label: 'WebPageTest Script',
+      instructions:
+        'The generated scripts allow the comparison of navigation and site speed for the user journey without prefetching vs. with prefetching of the selected resources.',
+      output: this.getWPT
+    }
+  ]
+
+  private activeView: DataExportTab = this.navigation[0]
   private output = ''
 
   // Material component reference
   private dialogMDC: MDCDialog | null = null
+  private navigationMDC: MDCTabBar | null = null
 
   mounted() {
+    if (this.tabbar) {
+      this.navigationMDC = new MDCTabBar(this.tabbar)
+    }
     if (this.dialog) {
       this.dialogMDC = new MDCDialog(this.dialog)
     }
@@ -96,8 +139,11 @@ export default class DataExport extends Vue {
     if (this.dialogMDC) {
       if (setOpen && !this.dialogMDC.isOpen) {
         this.dialogMDC.open()
-      } else if (!setOpen && this.dialogMDC.isOpen) {
-        this.dialogMDC.close()
+      } else if (!setOpen) {
+        this.output = ''
+        if (this.dialogMDC.isOpen) {
+          this.dialogMDC.close()
+        }
       }
     }
     if (this.open !== setOpen) {
@@ -105,12 +151,17 @@ export default class DataExport extends Vue {
     }
   }
 
-  showHTML() {
-    this.output = this.prefetchHTML
+  setActiveView(view: DataExportTab) {
+    this.activeView = view
+    this.output = view.output()
   }
 
-  showWPT() {
-    this.output = this.wptScript
+  getHTML() {
+    return this.prefetchHTML
+  }
+
+  getWPT() {
+    return this.wptScript
   }
 }
 </script>
