@@ -14,12 +14,8 @@
  *
  **/
 
-@use "~@material/theme" with (
-  $primary: #673ab7,
-  $accent: #9c27b0,
-  $on-primary: #fff,
-  $on-secondary: #fff,
-);
+@use "~@material/theme";
+
 @use "~@material/typography" with (
   $styles-headline1: (
     font-family: unquote("'Google Sans', Roboto, Helvetica, Arial, sans-serif")

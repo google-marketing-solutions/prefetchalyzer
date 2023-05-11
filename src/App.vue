@@ -111,7 +111,7 @@ import { MDCTabBar } from '@material/tab-bar'
 export default class App extends Vue {
   @Ref() dialog!: HTMLElement
 
-  private state: AppState = {
+  state: AppState = {
     hasData: false,
     activeView: 'import',
     pages: [],
@@ -120,7 +120,7 @@ export default class App extends Vue {
 
   private harStore: HarStore | null = null
 
-  private navigation: AppTab[] = [
+  navigation: AppTab[] = [
     {
       key: 'import',
       label: 'Import Session',

@@ -24,7 +24,7 @@ The easiest way to start using Prefetchalyzer is by using the hosted version ava
 The project was generated with vue-cli.
 
 ```
-npm install
+npm install --legacy-peer-deps
 ```
 For VSCode, Vetur extension is used to format the .vue files.
 Following settings are made in settings.json:
@@ -48,7 +48,7 @@ Following settings are made in settings.json:
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm start
 ```
 
 ### Compiles and minifies for production

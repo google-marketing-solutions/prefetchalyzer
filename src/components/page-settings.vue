@@ -38,7 +38,7 @@ import { Page } from '@/models/page'
 
 @Component
 export default class FileUpload extends Vue {
-  @Prop() private pages!: Page[]
+  @Prop() pages!: Page[]
 
   setTitle(page: Page) {
     this.$emit('setTitle', page)
