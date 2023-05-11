@@ -64,6 +64,18 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+### TODO Workflow Deployment
+
+```
+      - name: "Deploy \U0001F680"
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          BRANCH: gh-pages
+          FOLDER: dist
+          CLEAN: true 
+```
+
 ### Authors
 - [Stephan Giesau](https://github.com/pianomister/)
 - [Ayman Farhat](https://github.com/aymanfarhat)
