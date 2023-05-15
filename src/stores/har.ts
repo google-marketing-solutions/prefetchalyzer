@@ -156,7 +156,7 @@ export class HarStore {
         } else {
           this.debugLog.invalidEntries.push({
             item: entry,
-            issue: `sdf valid or relevant resourceType found in entry: ${result.resourceType}`
+            issue: `No valid or relevant resourceType found in entry: ${result.resourceType}`
           })
           return null
         }
