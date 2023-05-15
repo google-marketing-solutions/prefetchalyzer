@@ -77,14 +77,14 @@ export default class FileUpload extends Vue {
   @Ref() snackbar!: HTMLElement
   @Ref() snackbarMessage!: HTMLElement
 
-  private state: { uploadProgress: number | null; showTextInput: boolean } = {
+  state: { uploadProgress: number | null; showTextInput: boolean } = {
     // holds current progress of file upload or 'null' when finished
     uploadProgress: null,
     showTextInput: false
   }
 
   // holds HAR input from textarea
-  private harTextInput = ''
+  harTextInput = ''
 
   // Material component reference
   private snackbarMDC: MDCSnackbar | null = null
@@ -98,9 +98,9 @@ export default class FileUpload extends Vue {
     this.parseHAR(this.harTextInput)
   }
 
-  processFileSelection(): void {
+  processFileSelection(event: null | {target: {files: File[]}}): void {
     if (!event || event === null) return
-    const file: File | null = (event as any)?.target?.files[0]
+    const file: File | null = event?.target?.files[0]
 
     if (file) {
       this.processFile(file)

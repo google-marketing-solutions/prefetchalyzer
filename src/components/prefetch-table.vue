@@ -203,7 +203,7 @@ import ChipMultiSelect from './chip-multi-select.vue'
   }
 })
 export default class PrefetchTable extends Vue {
-  @Prop() private pages!: Page[]
+  @Prop() pages!: Page[]
   @Prop() private resources!: Resource[]
   @Ref() dialog!: HTMLElement
   @Ref() exportMenu!: HTMLElement
@@ -212,7 +212,7 @@ export default class PrefetchTable extends Vue {
   private dialogMDC: MDCDialog | null = null
   private exportMenuMDC: MDCMenu | null = null
 
-  private filters: PrefetchTableFilters = {
+  filters: PrefetchTableFilters = {
     // whether un-selected rows should be hidden from the UI (default: shown, but grayed-out)
     collapseUnselected: false,
     // whether URLs shall be displayed shortened (example.com/.../file.js) in the table (default: shorten)
@@ -225,7 +225,7 @@ export default class PrefetchTable extends Vue {
     }
   }
 
-  private generated = {
+  generated = {
     // holds generated output as requested, e.g.
     // WPT script or prefetch HTML output
     prefetchExport: ''

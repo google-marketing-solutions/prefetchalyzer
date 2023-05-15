@@ -66,7 +66,7 @@ export class HarStore {
     this.debugLog.statistics.validEntries = this.entries.length
 
     // expose debug log for easy access in production
-    const myWindow = window as any
+    const myWindow = window as unknown as {harDebugLog: HarDebugLog}
     myWindow.harDebugLog = this.debugLog
   }
 

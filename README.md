@@ -18,13 +18,13 @@
 
 ## Getting started
 
-The easiest way to start using Prefetchalyzer is by using the hosted version available [here](https://google.github.io/prefetchalyzer/).
+The easiest way to start using Prefetchalyzer is by using the hosted version available [here](https://gtech-professional-services.github.io/prefetchalyzer/).
 
 ## Project setup
 The project was generated with vue-cli.
 
 ```
-npm install
+npm install --legacy-peer-deps
 ```
 For VSCode, Vetur extension is used to format the .vue files.
 Following settings are made in settings.json:
@@ -48,7 +48,7 @@ Following settings are made in settings.json:
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm start
 ```
 
 ### Compiles and minifies for production
@@ -63,6 +63,18 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### TODO Workflow Deployment
+
+```
+      - name: "Deploy \U0001F680"
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          BRANCH: gh-pages
+          FOLDER: dist
+          CLEAN: true 
+```
 
 ### Authors
 - [Stephan Giesau](https://github.com/pianomister/)

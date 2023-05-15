@@ -35,7 +35,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class ChipMultiSelect extends Vue {
-  @Prop() private value!: Record<string, boolean>
+  @Prop() value!: Record<string, boolean>
 
   handleSelection(key: string) {
     const updatedSelection = this.value
@@ -47,5 +47,5 @@ export default class ChipMultiSelect extends Vue {
 </script>
 
 <style scoped lang="scss">
-  @use "@material/chips/mdc-chips";
+  @use "@material/chips/dist/mdc.chips.css";
 </style>
