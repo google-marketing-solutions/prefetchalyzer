@@ -18,7 +18,7 @@
 
 ## Getting started
 
-The easiest way to start using Prefetchalyzer is by using the hosted version available [here](https://gtech-professional-services.github.io/prefetchalyzer/).
+The easiest way to start using Prefetchalyzer is by using the hosted version available [here](https://google-marketing-solutions.github.io/prefetchalyzer/).
 
 ## Project setup
 The project was generated with vue-cli.
