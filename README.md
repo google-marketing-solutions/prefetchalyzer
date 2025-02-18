@@ -1,3 +1,7 @@
+> [!CAUTION]
+> This solution has been archived since February 2025. 
+> No new development or updates will be performed.
+
 # Prefetchalyzer
 > A tool that helps you identify the impact of applying prefetch strategies on your web app resources by analyzing pages across a simulated user's journey on the site
 
